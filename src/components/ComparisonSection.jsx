@@ -100,7 +100,7 @@ const ComparisonSection = () => {
         </div>
         
         <div className="comparison-grid">
-          <div className="comparison-column traditional">
+          <div className="comparison-column-traditional">
             <div className="column-header">
               <svg className="icon-svg" viewBox="0 0 21 22" fill="none">
                 <path className="icon-traditional-stroke" d="M9.3916 4.94155C11.4298 4.69866 13.4915 5.12952 15.2619 6.16835C17.0322 7.20717 18.4139 8.79687 19.196 10.6947C19.2689 10.8911 19.2689 11.1072 19.196 11.3037C18.8744 12.0833 18.4494 12.8161 17.9325 13.4824" strokeWidth="1.75"/>
@@ -113,7 +113,7 @@ const ComparisonSection = () => {
             
             <div className="items-list">
               {traditionalItems.map((item, index) => (
-                <div key={index} className="comparison-item traditional-item">
+                <div key={index} className="comparison-item">
                   <div className="item-icon">{item.icon}</div>
                   <div className="item-content">
                     <h4 className="item-title">
@@ -130,7 +130,7 @@ const ComparisonSection = () => {
             </div>
           </div>
           
-          <div className="comparison-column oversite">
+          <div className="comparison-column-oversite">
             <div className="column-header">
               <svg className="icon-svg" viewBox="0 0 21 22" fill="none">
                 <path className="icon-oversite-stroke" d="M1.8042 11.3044C1.73128 11.108 1.73128 10.8919 1.8042 10.6954C2.51444 8.97332 3.72003 7.50086 5.26813 6.46474C6.81623 5.42861 8.63712 4.87549 10.5 4.87549C12.3628 4.87549 14.1837 5.42861 15.7318 6.46474C17.2799 7.50086 18.4855 8.97332 19.1957 10.6954C19.2686 10.8919 19.2686 11.108 19.1957 11.3044C18.4855 13.0266 17.2799 14.499 15.7318 15.5352C14.1837 16.5713 12.3628 17.1244 10.5 17.1244C8.63712 17.1244 6.81623 16.5713 5.26813 15.5352C3.72003 14.499 2.51444 13.0266 1.8042 11.3044Z" strokeWidth="1.75"/>
