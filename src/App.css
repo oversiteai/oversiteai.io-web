@@ -170,18 +170,21 @@
 }
 
 .logo-wrapper {
-  width: 3.2vw;
+  display: flex;
+  align-items: center;
   height: 2.4vw;
 }
 
 .logo-image {
   height: 2.4vw;
   width: auto;
+  display: block;
 }
 
 .logo-text {
   display: flex;
   flex-direction: column;
+  justify-content: center;
 }
 
 .oversite {
