@@ -1,0 +1,158 @@
+import React, { useState, useRef, useEffect } from 'react';
+
+const DarkwaterSection = () => {
+  const [videoEnded, setVideoEnded] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const videoRef = useRef(null);
+  const sectionRef = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !isVisible) {
+            setIsVisible(true);
+            if (videoRef.current) {
+              videoRef.current.play();
+            }
+          }
+        });
+      },
+      { threshold: 0.3 }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => {
+      if (sectionRef.current) {
+        observer.unobserve(sectionRef.current);
+      }
+    };
+  }, [isVisible]);
+
+  const handleVideoEnd = () => {
+    setVideoEnded(true);
+  };
+
+  return (
+    <section className="darkwater-section" ref={sectionRef}>
+      <div className="bg-overlays">
+        <div className="overlay-circle-1"></div>
+        <div className="overlay-circle-2"></div>
+      </div>
+      
+      <div className="container">
+        <div className="darkwater-content">
+          <div className="darkwater-info">
+            <div className="flagship-badge">
+              <svg className="icon-darkwater" viewBox="0 0 14 15" fill="none">
+                <path className="icon-darkwater" d="M11.6668 7.83343C11.6668 10.7501 9.62516 12.2084 7.1985 13.0543C7.07142 13.0973 6.93339 13.0953 6.80766 13.0484C4.37516 12.2084 2.3335 10.7501 2.3335 7.83343V3.7501C2.3335 3.59539 2.39495 3.44702 2.50435 3.33762C2.61375 3.22822 2.76212 3.16677 2.91683 3.16677C4.0835 3.16677 5.54183 2.46677 6.55683 1.5801C6.68041 1.47452 6.83762 1.4165 7.00016 1.4165C7.16271 1.4165 7.31991 1.47452 7.4435 1.5801C8.46433 2.4726 9.91683 3.16677 11.0835 3.16677C11.2382 3.16677 11.3866 3.22822 11.496 3.33762C11.6054 3.44702 11.6668 3.59539 11.6668 3.7501V7.83343Z" strokeWidth="1.16667"/>
+              </svg>
+              <span>Flagship System</span>
+            </div>
+            
+            <h2 className="darkwater-title">
+              Meet <span className="gradient-text">DARKWATER</span>
+            </h2>
+            
+            <p className="darkwater-subtitle">
+              The World's First Quantum-Ready Encrypted Traffic Intelligence Platform.
+            </p>
+            
+            <div className="darkwater-features">
+              <div className="feature-item">
+                <div className="feature-icon">
+                  <svg className="icon-feature" viewBox="0 0 22 22" fill="none">
+                    <path className="icon-feature" d="M7.0625 12.5625H12.3125V13.875H7.0625V12.5625ZM18.875 9.16313V11.5388C18.875 15.5484 15.2984 17.6419 12.68 19.1709C12.2075 19.4466 11.7547 19.7091 11.3544 19.9716L11 20.2013L10.6456 19.9716C10.2453 19.7156 9.7925 19.4531 9.32 19.1709C6.70812 17.6419 3.125 15.5484 3.125 11.5388V3.375C3.125 2.65312 3.71562 2.0625 4.4375 2.0625H18.2188V3.375H4.4375V9.28125H8.375V10.5938H4.4375V11.5388C4.4375 14.7938 7.50875 16.5919 9.98281 18.0356C10.3372 18.2456 10.685 18.4425 11 18.6394C11.3216 18.4425 11.6628 18.2391 12.0172 18.0356C13.8219 16.9856 15.935 15.7388 16.9522 13.8816H13.6184V12.5691H17.4444C17.5166 12.2409 17.5559 11.9063 17.5559 11.5453V9.16969C17.1725 9.03512 16.8402 8.7848 16.6051 8.4533C16.37 8.1218 16.2436 7.72547 16.2434 7.31906C16.2434 6.23625 17.1294 5.35031 18.2122 5.35031C19.295 5.35031 20.1809 6.23625 20.1809 7.31906C20.1809 8.17219 19.6297 8.89406 18.8684 9.16969L18.875 9.16313Z"/>
+                  </svg>
+                </div>
+                <span>Quantum vulnerability scoring</span>
+              </div>
+              
+              <div className="feature-item">
+                <div className="feature-icon">
+                  <svg className="icon-feature" viewBox="0 0 18 13" fill="none">
+                    <path className="icon-feature" d="M3.07075 0.300797C3.16586 0.208499 3.29374 0.157754 3.42625 0.159723C3.55877 0.161692 3.68508 0.216213 3.7774 0.311297C3.87784 0.416827 3.93289 0.557536 3.93073 0.703206C3.92857 0.848876 3.86938 0.98789 3.76585 1.0904C2.40826 2.46431 1.6479 4.31859 1.6501 6.2501C1.6501 8.3396 2.5216 10.2254 3.9223 11.5631C3.97614 11.6132 4.0195 11.6735 4.04988 11.7405C4.08027 11.8075 4.09707 11.8799 4.09931 11.9534C4.10156 12.0269 4.0892 12.1001 4.06297 12.1689C4.03673 12.2376 3.99713 12.3004 3.94645 12.3537C3.85613 12.4471 3.73297 12.5014 3.60317 12.5054C3.47336 12.5093 3.34715 12.4624 3.25135 12.3747C2.41342 11.59 1.74571 10.6413 1.28963 9.58778C0.833561 8.5342 0.598863 7.39815 0.600103 6.2501C0.600103 3.9254 1.5451 1.8212 3.07075 0.300797ZM14.2344 1.0904C14.131 0.987752 14.072 0.84866 14.07 0.702991C14.068 0.557322 14.1233 0.416691 14.2239 0.311297C14.3161 0.216532 14.4422 0.162215 14.5745 0.160247C14.7067 0.158279 14.8344 0.208821 14.9295 0.300797C15.7134 1.08041 16.3353 2.00746 16.7594 3.02853C17.1834 4.04959 17.4012 5.14448 17.4001 6.2501C17.4001 8.6651 16.3816 10.8428 14.7489 12.3747C14.6531 12.4624 14.5268 12.5093 14.397 12.5054C14.2672 12.5014 14.1441 12.4471 14.0538 12.3537C14.0032 12.3004 13.9638 12.2377 13.9376 12.1691C13.9115 12.1004 13.8992 12.0273 13.9014 11.9539C13.9037 11.8805 13.9204 11.8083 13.9507 11.7414C13.981 11.6745 14.0242 11.6143 14.0779 11.5641C14.7971 10.8786 15.3693 10.0541 15.7599 9.14055C16.1505 8.22703 16.3513 7.24362 16.3501 6.2501C16.3526 4.31823 15.5922 2.46457 14.2344 1.0904ZM4.9387 2.1446C5.03227 2.05548 5.15741 2.00719 5.28658 2.01034C5.41576 2.01349 5.53839 2.06783 5.6275 2.1614C5.8459 2.3798 5.82385 2.7389 5.6086 2.9594C4.7532 3.84122 4.27489 5.02155 4.2751 6.2501C4.2751 7.6046 4.84525 8.8268 5.7598 9.68885C5.9908 9.9062 6.0223 10.2779 5.79655 10.5036C5.71002 10.5936 5.59219 10.6469 5.46748 10.6523C5.34277 10.6578 5.22074 10.6151 5.12665 10.533C4.52799 9.99167 4.04946 9.33082 3.72193 8.59311C3.39441 7.85541 3.22516 7.05724 3.2251 6.2501C3.22395 5.48629 3.37487 4.72991 3.66908 4.02504C3.96328 3.32017 4.39488 2.68093 4.9387 2.1446ZM12.3916 2.9594C12.1764 2.7389 12.1543 2.3798 12.3727 2.1614C12.4618 2.06783 12.5844 2.01349 12.7136 2.01034C12.8428 2.00719 12.9679 2.05548 13.0615 2.1446C13.6053 2.68093 14.0369 3.32017 14.3311 4.02504C14.6253 4.72991 14.7763 5.48629 14.7751 6.2501C14.7753 7.05734 14.6063 7.85566 14.279 8.59355C13.9516 9.33144 13.4732 9.99251 12.8746 10.5341C12.7801 10.6165 12.6575 10.6592 12.5323 10.6534C12.4071 10.6475 12.2889 10.5935 12.2026 10.5026C11.9779 10.2779 12.0094 9.9062 12.2404 9.68885C12.7092 9.24713 13.0827 8.71422 13.338 8.12287C13.5934 7.53152 13.7251 6.89421 13.7251 6.2501C13.7253 5.02155 13.247 3.84122 12.3916 2.9594ZM9.0001 4.9376C8.65201 4.9376 8.31817 5.07588 8.07203 5.32202C7.82588 5.56816 7.6876 5.902 7.6876 6.2501C7.6876 6.59819 7.82588 6.93203 8.07203 7.17817C8.31817 7.42432 8.65201 7.5626 9.0001 7.5626C9.3482 7.5626 9.68204 7.42432 9.92818 7.17817C10.1743 6.93203 10.3126 6.59819 10.3126 6.2501C10.3126 5.902 10.1743 5.56816 9.92818 5.32202C9.68204 5.07588 9.3482 4.9376 9.0001 4.9376Z"/>
+                  </svg>
+                </div>
+                <span>Live detection of insider and supply chain threats</span>
+              </div>
+              
+              <div className="feature-item">
+                <div className="feature-icon">
+                  <svg className="icon-feature" viewBox="0 0 22 22" fill="none">
+                    <path className="icon-feature" d="M9.7626 2.58744C10.0723 2.27811 10.4868 2.09609 10.9241 2.0773C11.3615 2.05851 11.79 2.20431 12.1251 2.48594L12.2371 2.58832L13.8996 4.24994H16.2499C16.6912 4.25002 17.1162 4.41687 17.4398 4.71705C17.7633 5.01723 17.9615 5.42858 17.9946 5.86869L17.9999 5.99994V8.35019L19.6624 10.0127C19.9719 10.3225 20.1541 10.7371 20.1729 11.1746C20.1917 11.6122 20.0457 12.0409 19.7639 12.3761L19.6615 12.4872L17.999 14.1497V16.4999C17.9991 16.9414 17.8324 17.3667 17.5322 17.6904C17.232 18.0142 16.8205 18.2125 16.3802 18.2456L16.2499 18.2499H13.9005L12.238 19.9124C11.9282 20.222 11.5136 20.4042 11.076 20.423C10.6385 20.4418 10.2098 20.2958 9.8746 20.0139L9.76348 19.9124L8.10098 18.2499H5.74985C5.30835 18.2501 4.88311 18.0833 4.55937 17.7831C4.23564 17.4829 4.03734 17.0715 4.00423 16.6312L3.99985 16.4999V14.1497L2.33735 12.4872C2.02777 12.1774 1.8456 11.7628 1.82681 11.3253C1.80802 10.8877 1.95397 10.459 2.23585 10.1238L2.33735 10.0127L3.99985 8.35019V5.99994C3.99993 5.55859 4.16678 5.13356 4.46696 4.81002C4.76714 4.48647 5.17849 4.28829 5.6186 4.25519L5.74985 4.24994H8.1001L9.7626 2.58744Z"/>
+                  </svg>
+                </div>
+                <span>100% certificate visibility</span>
+              </div>
+            </div>
+            
+            <button className="btn btn-primary">
+              Talk to Us About DARKWATER
+            </button>
+          </div>
+          
+          <div className="darkwater-terminal">
+            <div className="terminal-header">
+              <div className="terminal-dots">
+                <div className="dot blue"></div>
+                <div className="dot yellow"></div>
+                <div className="dot blue"></div>
+              </div>
+              <span className="terminal-title">DARKWATER</span>
+            </div>
+            
+            {!videoEnded && (
+              <video
+                ref={videoRef}
+                className="terminal-video"
+                src="/video/stormbringer.mp4"
+                onEnded={handleVideoEnd}
+                muted
+                playsInline
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  opacity: 1,
+                  transition: 'opacity 1s ease-out'
+                }}
+              />
+            )}
+            
+            <div className={`terminal-content ${videoEnded ? 'fade-in' : ''}`}>
+              <div className="terminal-line command">
+                darkwater status: 
+              </div>
+              <div className="terminal-line">
+                ✓ Quantum encryption: <span style={{ color: '#4DFFB0' }}>ACTIVE</span>
+              </div>
+              <div className="terminal-line">
+                ✓ Zero-trust verification: <span style={{ color: '#4DFFB0' }}>ENABLED</span>
+              </div>
+              <div className="terminal-line">
+                ✓ Threat detection: <span style={{ color: '#FF3D66' }}>BREACH IMMINENT</span>
+              </div>
+            </div>
+            
+            <div className={`terminal-visualization ${videoEnded ? 'fade-in' : ''}`}>
+              <img 
+                src="/images/darkwater4.png" 
+                alt="Network visualization" 
+                className="network-viz"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default DarkwaterSection;

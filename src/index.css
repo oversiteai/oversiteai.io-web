@@ -1,0 +1,100 @@
+:root {
+  --White: #FFF;
+  --Gradient: linear-gradient(90deg, #53EBFF 0.27%, #239EAE 100.05%);
+  --Text: #D1D5DC;
+  --Blue: #2BB4C6;
+  --Green: #4DFFB0;
+  --Red: #FF3D66;
+  --Dark-BG: #0B0D10;
+  --Dark-Secondary: #1B1F23;
+  --Border: #1E2939;
+  --Gray: #99A1AF;
+  
+  /* Pure Viewport Typography Scale - scales with browser width */
+  --fs-hero: 4.8vw;
+  --fs-h1: 3.5vw;
+  --fs-h2: 2.5vw;
+  --fs-h3: 2vw;
+  --fs-body-lg: 1.1vw;
+  --fs-body: 0.9vw;
+  --fs-small: 0.75vw;
+  --fs-tiny: 0.65vw;
+  
+  /* Pure Viewport Spacing Scale - scales with browser width */
+  --space-xs: 0.4vw;
+  --space-sm: 0.8vw;
+  --space-md: 1.6vw;
+  --space-lg: 2.4vw;
+  --space-xl: 3.2vw;
+  --space-2xl: 4.8vw;
+  --space-3xl: 6.4vw;
+  
+  font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color-scheme: dark;
+  color: var(--Text);
+  background-color: var(--Dark-BG);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: var(--Dark-BG);
+  color: var(--Text);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+.gradient-text {
+  background: var(--Gradient);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.container {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 28px;
+}
+
+.section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

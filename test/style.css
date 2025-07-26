@@ -1,0 +1,61 @@
+/* style.css */
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: #0a0a0a;
+  font-family: sans-serif;
+}
+
+.grid-background {
+  position: relative;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+/* 🆕 Grid overlay — fully visible now */
+.grid-background::before {
+  content: "";
+  position: fixed; /* 🆕 ensures full viewport coverage and detaches from flow */
+  top: 0;
+  left: 0;
+  width: 200vw; /* 🆕 wider than screen to avoid clipping during zoom */
+  height: 200vh; /* 🆕 taller than screen for same reason */
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.90) 1px, transparent 1px),  /* ⬆️ Increased opacity for visibility */
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.90) 1px, transparent 1px); /* ⬆️ */
+  background-size: 40px 40px;
+  animation: gridZoom 10s ease-in-out infinite; /* ⬆️ Faster cycle to make animation noticeable */
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* 🆕 Keyframe animation to scale the grid in and out */
+@keyframes gridZoom {
+  0%   { background-size: 40px 40px; opacity: 0.15; }  /* ⬆️ Stronger starting opacity */
+  50%  { background-size: 100px 100px; opacity: 0.07; } /* ⬆️ Larger max zoom and slight fade out */
+  100% { background-size: 40px 40px; opacity: 0.15; }  /* ⬆️ Back to start */
+}
+
+/* Foreground content remains unchanged */
+.content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding-top: 25vh;
+  color: white;
+}
+
+button {
+  margin: 1rem;
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  background: rgba(255,255,255,0.1);
+  border: none;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
