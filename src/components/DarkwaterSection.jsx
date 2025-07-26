@@ -109,7 +109,7 @@ const DarkwaterSection = () => {
               <video
                 ref={videoRef}
                 className="terminal-video"
-                src="/video/stormbringer.mp4"
+                src="video/stormbringer.mp4"
                 onEnded={handleVideoEnd}
                 muted
                 playsInline
@@ -143,7 +143,7 @@ const DarkwaterSection = () => {
             
             <div className={`terminal-visualization ${videoEnded ? 'fade-in' : ''}`}>
               <img 
-                src="/images/darkwater4.png" 
+                src="images/darkwater4.png" 
                 alt="Network visualization" 
                 className="network-viz"
               />

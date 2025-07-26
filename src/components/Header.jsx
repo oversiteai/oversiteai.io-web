@@ -7,7 +7,7 @@ const Header = () => {
         <div className="logo-section">
           <div className="logo-wrapper">
             <img 
-              src="public/images/logo.png" 
+              src="images/logo.png" 
               alt="OverSiteAI Logo" 
               className="logo-image"
             />

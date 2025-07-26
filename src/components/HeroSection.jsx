@@ -6,7 +6,7 @@ const HeroSection = () => {
       <div className="hero-video-background">
         <video 
           className="hero-bg-video"
-          src="/video/oversiteai_drone.mp4"
+          src="video/oversiteai_drone.mp4"
           autoPlay
           loop
           muted
@@ -65,7 +65,7 @@ const HeroSection = () => {
             <div className="card-content">
               <video 
                 className="drone-video"
-                src="/video/oversiteai_drone.mp4"
+                src="video/oversiteai_drone.mp4"
                 autoPlay
                 loop
                 muted

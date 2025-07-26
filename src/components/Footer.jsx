@@ -8,7 +8,7 @@ const Footer = () => {
           <div className="footer-brand">
             <div className="brand-logo">
               <img 
-                src="/images/logo.png" 
+                src="images/logo.png" 
                 alt="OverSiteAI Logo" 
                 className="footer-logo"
               />
