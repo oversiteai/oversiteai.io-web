@@ -45,6 +45,18 @@ const Header = () => {
             className="nav-item" 
             ref={el => navItemRefs.current[0] = el}
             onMouseEnter={() => handleMouseEnter(0)}
+            onClick={() => {
+              const element = document.querySelector('.footer');
+              if (element) {
+                const headerOffset = window.innerWidth * 0.02;
+                const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+                const offsetPosition = elementPosition - headerOffset - (window.innerWidth * 0.01);
+                window.scrollTo({
+                  top: offsetPosition,
+                  behavior: 'smooth'
+                });
+              }
+            }}
           >
             <span>About</span>
           </div>
@@ -52,6 +64,18 @@ const Header = () => {
             className="nav-item"
             ref={el => navItemRefs.current[1] = el}
             onMouseEnter={() => handleMouseEnter(1)}
+            onClick={() => {
+              const element = document.querySelector('.solutions-section');
+              if (element) {
+                const headerOffset = window.innerWidth * 0.02;
+                const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+                const offsetPosition = elementPosition - headerOffset - (window.innerWidth * 0.01);
+                window.scrollTo({
+                  top: offsetPosition,
+                  behavior: 'smooth'
+                });
+              }
+            }}
           >
             <span>Solutions</span>
           </div>
@@ -59,6 +83,18 @@ const Header = () => {
             className="nav-item"
             ref={el => navItemRefs.current[2] = el}
             onMouseEnter={() => handleMouseEnter(2)}
+            onClick={() => {
+              const element = document.querySelector('.tech-section');
+              if (element) {
+                const headerOffset = window.innerWidth * 0.02;
+                const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+                const offsetPosition = elementPosition - headerOffset - (window.innerWidth * 0.01);
+                window.scrollTo({
+                  top: offsetPosition,
+                  behavior: 'smooth'
+                });
+              }
+            }}
           >
             <span>News</span>
           </div>
