@@ -176,7 +176,19 @@ const HeroSection = () => {
         </div>
       </div>
       
-      <div className="scroll-indicator">
+      <div className="scroll-indicator" onClick={() => {
+        const element = document.querySelector('.comparison-section');
+        if (element) {
+          const headerOffset = window.innerWidth * 0.02;
+          const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+          const offsetPosition = elementPosition - headerOffset - (window.innerWidth * 0.01);
+          
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
+        }
+      }}>
         <div className="scroll-text">Scroll to explore</div>
         <div className="scroll-mouse">
           <div className="scroll-dot"></div>

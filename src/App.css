@@ -203,7 +203,24 @@
 .nav {
   display: flex;
   align-items: center;
-  gap: 1.2vw;
+  gap: 10.0vw;
+  position: relative;
+}
+
+.nav-underline {
+  position: absolute;
+  bottom: -0.3vw;
+  left: 0;
+  height: 0.15vw;
+  background: var(--Blue);
+  box-shadow: 0 0.2vw 0.6vw rgba(78, 195, 211, 0.6);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.nav:hover .nav-underline {
+  opacity: 1;
 }
 
 .nav-item {
@@ -212,9 +229,10 @@
   gap: 0.45vw;
   color: #D1D5DC;
   font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
-  font-size: var(--fs-small);
-  font-weight: 400;
+  font-size: var(--fs-body);
+  font-weight: 700;
   cursor: pointer;
+  position: relative;
   transition: color 0.3s ease;
 }
 
@@ -985,7 +1003,7 @@
 
 .scroll-indicator {
   position: absolute;
-  bottom: 3vw;
+  bottom: 1.50vw;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -993,6 +1011,20 @@
   align-items: center;
   gap: 0.8vw;
   opacity: 0.6;
+  z-index: 6;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+
+/* Hide on touch devices that don't support hover */
+@media (hover: none) {
+  .scroll-indicator {
+    display: none;
+  }
+}
+
+.scroll-indicator:hover {
+  opacity: 1;
 }
 
 .scroll-text {
@@ -1001,24 +1033,42 @@
   font-size: 0.75vw;
   font-weight: 400;
   line-height: 14px;
+  transition: all 0.3s ease;
+}
+
+.scroll-indicator:hover .scroll-text {
+  color: var(--Blue);
+  text-shadow: 0 0 0.8vw rgba(78, 195, 211, 0.6);
 }
 
 .scroll-mouse {
   display: flex;
-  width: 21px;
-  height: 35px;
-  padding: 9px 2px 15.5px 2px;
+  width: 1.313vw; /* 25.2px at 1920px (21px + 20%) */
+  height: 2.188vw; /* 42px at 1920px (35px + 20%) */
+  padding: 0.563vw 0.125vw 0.968vw 0.125vw; /* Increased by 20% */
   justify-content: center;
   align-items: flex-start;
   border-radius: 3.75vw;
-  border: 2px solid #99A1AF;
+  border: 0.125vw solid #99A1AF; /* 2.4px at 1920px */
+  transition: all 0.3s ease;
+}
+
+.scroll-indicator:hover .scroll-mouse {
+  border-color: var(--Blue);
+  box-shadow: 0 0 0.8vw rgba(78, 195, 211, 0.5);
 }
 
 .scroll-dot {
-  width: 3.5px;
-  height: 10.5px;
+  width: 0.218vw; /* 4.2px at 1920px (3.5px + 20%) */
+  height: 0.656vw; /* 12.6px at 1920px (10.5px + 20%) */
   border-radius: 3.75vw;
   background: #99A1AF;
+  transition: all 0.3s ease;
+}
+
+.scroll-indicator:hover .scroll-dot {
+  background: var(--Blue);
+  box-shadow: 0 0 0.6vw rgba(78, 195, 211, 0.8);
 }
 
 /* Comparison Section Styles */

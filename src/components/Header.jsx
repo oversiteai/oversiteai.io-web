@@ -1,6 +1,27 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 const Header = () => {
+  const [underlineStyle, setUnderlineStyle] = useState({});
+  const navRef = useRef(null);
+  const navItemRefs = useRef([]);
+
+  const handleMouseEnter = (index) => {
+    const navItem = navItemRefs.current[index];
+    if (navItem && navRef.current) {
+      const navRect = navRef.current.getBoundingClientRect();
+      const itemRect = navItem.getBoundingClientRect();
+      
+      setUnderlineStyle({
+        width: `${itemRect.width}px`,
+        transform: `translateX(${itemRect.left - navRect.left}px)`
+      });
+    }
+  };
+
+  const handleMouseLeave = () => {
+    // Keep the underline visible until mouse leaves the nav area
+  };
+
   return (
     <header className="header">
       <div className="header-container">
@@ -18,17 +39,27 @@ const Header = () => {
           </div>
         </div>
         
-        <nav className="nav">
-          <div className="nav-item">
+        <nav className="nav" ref={navRef} onMouseLeave={handleMouseLeave}>
+          <div className="nav-underline" style={underlineStyle} />
+          <div 
+            className="nav-item" 
+            ref={el => navItemRefs.current[0] = el}
+            onMouseEnter={() => handleMouseEnter(0)}
+          >
             <span>About</span>
           </div>
-          <div className="nav-item">
+          <div 
+            className="nav-item"
+            ref={el => navItemRefs.current[1] = el}
+            onMouseEnter={() => handleMouseEnter(1)}
+          >
             <span>Solutions</span>
-            <svg width="10" height="6" viewBox="0 0 10 6" fill="none">
-              <path d="M1 0.5L5 4.5L9 0.5" stroke="#D1D5DC"/>
-            </svg>
           </div>
-          <div className="nav-item">
+          <div 
+            className="nav-item"
+            ref={el => navItemRefs.current[2] = el}
+            onMouseEnter={() => handleMouseEnter(2)}
+          >
             <span>News</span>
           </div>
         </nav>
