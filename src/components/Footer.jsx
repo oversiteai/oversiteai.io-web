@@ -50,39 +50,39 @@ const Footer = () => {
             <div className="footer-solutions-wrapper">
               <div className="footer-section">
                 <h3 className="footer-title">Field Operations</h3>
-                <ul className="footer-links">
-                  <li><a href="#">GPS Tracking</a></li>
-                  <li><a href="#">Geofencing</a></li>
-                  <li><a href="#">Spill & HSE Detection</a></li>
-                  <li><a href="#">Smart Field Tickets</a></li>
-                  <li><a href="#">Flow Meter Automation</a></li>
-                  <li><a href="#">Well Verification</a></li>
-                </ul>
+                <div className="footer-links">
+                  <a href="#">GPS Tracking</a>
+                  <a href="#">Geofencing</a>
+                  <a href="#">Spill & HSE Detection</a>
+                  <a href="#">Smart Field Tickets</a>
+                  <a href="#">Flow Meter Automation</a>
+                  <a href="#">Well Verification</a>
+                </div>
               </div>
               
               <div className="footer-section">
                 <h3 className="footer-title">Compliance & Safety</h3>
-                <ul className="footer-links">
-                  <li><a href="#">UIC Compliance</a></li>
-                  <li><a href="#">Vision Gate Control</a></li>
-                  <li><a href="#">Incident Auto-Logging</a></li>
-                  <li><a href="#">Inventory Monitoring</a></li>
-                  <li><a href="#">Tank Integration</a></li>
-                  <li><a href="#">Predictive Maintenance</a></li>
-                </ul>
+                <div className="footer-links">
+                  <a href="#">UIC Compliance</a>
+                  <a href="#">Vision Gate Control</a>
+                  <a href="#">Incident Auto-Logging</a>
+                  <a href="#">Inventory Monitoring</a>
+                  <a href="#">Tank Integration</a>
+                  <a href="#">Predictive Maintenance</a>
+                </div>
               </div>
             </div>
           </div>
 
           <div className="footer-section">
             <h3 className="footer-title">Company</h3>
-            <ul className="footer-links">
-              <li><a href="#">About Us</a></li>
-              <li><a href="#">Careers</a></li>
-              <li><a href="#">News</a></li>
-              <li><a href="#">Investors</a></li>
-              <li><a href="#">Contact</a></li>
-            </ul>
+            <div className="footer-links">
+              <a href="#">About Us</a>
+              <a href="#">Careers</a>
+              <a href="#">News</a>
+              <a href="#">Investors</a>
+              <a href="#">Contact</a>
+            </div>
           </div>
         </div>
         
