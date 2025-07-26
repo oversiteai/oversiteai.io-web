@@ -1931,6 +1931,10 @@
   gap: 0.547vw; /* 10.5px */
 }
 
+.footer-links li {
+  line-height: 1;
+}
+
 .footer-links a {
   color: #99A1AF;
   font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
