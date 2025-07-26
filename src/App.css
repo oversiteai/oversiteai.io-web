@@ -241,6 +241,7 @@
 
 .contact-button:hover {
   transform: translateY(-1px);
+  box-shadow: 0 0.5vw 1.5vw rgba(78, 195, 211, 0.4);
 }
 
 /* Hero Section Styles */
