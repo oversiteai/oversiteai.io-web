@@ -25,7 +25,16 @@ const Header = () => {
   return (
     <header className="header">
       <div className="header-container">
-        <div className="logo-section">
+        <div 
+          className="logo-section"
+          onClick={() => {
+            window.scrollTo({
+              top: 0,
+              behavior: 'smooth'
+            });
+          }}
+          style={{ cursor: 'pointer' }}
+        >
           <div className="logo-wrapper">
             <img 
               src="images/logo.png" 

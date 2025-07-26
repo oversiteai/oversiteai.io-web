@@ -186,6 +186,11 @@ main {
   display: flex;
   align-items: center;
   gap: 0.6vw;
+  transition: filter 0.3s ease;
+}
+
+.logo-section:hover {
+  filter: drop-shadow(0 0 0.8vw rgba(78, 195, 211, 0.6));
 }
 
 .logo-wrapper {
