@@ -14,6 +14,25 @@
   --space-xl: 2.5vw; /* 48px at 1920px */
 }
 
+/* App Container Structure */
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.App {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
 /* Default Theme (Dark Mode - High Contrast) */
 [data-theme="default"],
 :root {
@@ -265,14 +284,15 @@
 /* Hero Section Styles */
 .hero-section {
   position: relative;
-  min-height: 45vw;
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   background: var(--Dark-Base);
   overflow: hidden;
   margin-top: 5vw;
-  padding-bottom: 3vw;
+  padding-bottom: 2vw;
+  min-height: 0;
 }
 
 /* Hero Video Background */
@@ -820,7 +840,7 @@
   z-index: 5;
   max-width: 65vw;
   text-align: center;
-  padding: 8vw 1vw 0 1vw;
+  padding: 4vw 1vw 0 1vw;
 }
 
 .drone-feed-container {
@@ -848,7 +868,7 @@
 }
 
 .hero-title {
-  margin-bottom: 1.5vw;
+  margin-bottom: 1vw;
 }
 
 .hero-title div:first-child {
@@ -874,7 +894,7 @@
 
 .hero-description {
   max-width: 42vw;
-  margin: 0 auto 2.5vw;
+  margin: 0 auto 1.5vw;
   color: #D1D5DC;
   font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
   font-size: var(--fs-body-lg);
@@ -886,7 +906,7 @@
   display: flex;
   justify-content: center;
   gap: 1.2vw;
-  margin-bottom: 2vw;
+  margin-bottom: 1.5vw;
 }
 
 .btn {
@@ -938,7 +958,7 @@
   align-items: flex-start;
   gap: 1.5vw;
   padding-top: 2vw;
-  margin-top: 3vw;
+  margin-top: 2vw;
   border-top: 1px solid rgba(30, 41, 57, 0.50);
 }
 
