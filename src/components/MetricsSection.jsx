@@ -1,4 +1,5 @@
 import React from 'react';
+import NeuralMeshBackground from './NeuralMeshBackground';
 
 const MetricsSection = () => {
   const metrics = [
@@ -48,6 +49,7 @@ const MetricsSection = () => {
 
   return (
     <section className="metrics-section">
+      <NeuralMeshBackground />
       <div className="container">
         <div className="section-header">
           <div className="section-badge">Field-Proven Metrics That Matter</div>

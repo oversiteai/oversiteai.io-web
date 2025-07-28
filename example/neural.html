@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Organic Neural Mesh</title>
+  <style>
+    body { 
+      margin: 0; 
+      background: #0f0f17; 
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    #canvas-container {
+      width: 90%;
+      height: 30vh;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(15, 15, 23, 0.5);
+    }
+    canvas { 
+      display: block;
+      width: 100% !important;
+      height: 100% !important;
+    }
+  </style>
+</head>
+<body>
+<div id="canvas-container"></div>
+<script type="module">
+  import * as THREE from 'https://esm.sh/three@0.178.0';
+  import { EffectComposer } from 'https://esm.sh/three@0.178.0/examples/jsm/postprocessing/EffectComposer.js';
+  import { RenderPass } from 'https://esm.sh/three@0.178.0/examples/jsm/postprocessing/RenderPass.js';
+  import { UnrealBloomPass } from 'https://esm.sh/three@0.178.0/examples/jsm/postprocessing/UnrealBloomPass.js';
+  import { ShaderPass } from 'https://esm.sh/three@0.178.0/examples/jsm/postprocessing/ShaderPass.js';
+
+  let NEURON_COUNT = 3000;
+  const BASE_RADIUS = 10;
+  const MAX_SYNAPSES_PER_NEURON = 8;
+  const MIN_SYNAPSES_PER_EVENT = 4;
+  const MAX_SYNAPSES_PER_EVENT = 8;
+  const STIFFNESS = 0.003;
+  const MAX_SYNAPSE_DISTANCE = 8;
+  const MIN_SYNAPSE_DISTANCE = 2;
+  const MERGE_ANIMATION_MIN = 500;   // Minimum milliseconds for merge animation
+  const MERGE_ANIMATION_MAX = 1800;   // Maximum milliseconds for merge animation
+  
+  // Rotation configuration - set to 0 to disable rotation on that axis
+  const ROTATION_SPEED_X = 0.0001;  // Vertical tumbling
+  const ROTATION_SPEED_Y = 0.0012;  // Horizontal spinning
+  const ROTATION_SPEED_Z = 0.0000;  // Roll rotation (disabled by default)
+  
+  // Camera position configuration
+  const CAMERA_POSITION_X = 0;
+  const CAMERA_POSITION_Y = 0;
+  const CAMERA_POSITION_Z = 18;
+  
+  // Visual configuration
+  const SYNAPSE_THICKNESS = 2.0;  // Line thickness for connections
+  const BLUR_AMOUNT = 0.002;      // Overall blur intensity
+  const BLUR_FOCUS = 0.5;         // Focus point (0-1, where 0.5 is center)
+  
+  // Color configuration (HSL values)
+  const NEURON_HUE = 0.58;        // Hue (0-1): 0.58 = neon blue
+  const NEURON_SATURATION = 0.8;  // Saturation (0-1): 0 = gray, 1 = vivid
+  const NEURON_LIGHTNESS = 0.5;   // Lightness (0-1): 0 = black, 1 = white
+  const SYNAPSE_COLOR = '#4a7ba7'; // Hex color for synapses
+
+  const container = document.getElementById('canvas-container');
+  const containerRect = container.getBoundingClientRect();
+
+  const scene = new THREE.Scene();
+  scene.fog = new THREE.Fog('#0f0f17', 5, 40);  // Denser fog for more atmosphere
+
+  // Adjust camera to account for wide aspect ratio
+  const camera = new THREE.PerspectiveCamera(50, containerRect.width / containerRect.height, 0.1, 100);
+  camera.position.set(CAMERA_POSITION_X, CAMERA_POSITION_Y, CAMERA_POSITION_Z);
+
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(containerRect.width, containerRect.height);
+  container.appendChild(renderer.domElement);
+
+  const composer = new EffectComposer(renderer);
+  composer.addPass(new RenderPass(scene, camera));
+  
+  // Bloom for glow effect
+  const bloomPass = new UnrealBloomPass(new THREE.Vector2(containerRect.width, containerRect.height), 1.5, 0.4, 0.85);
+  bloomPass.threshold = 0;
+  bloomPass.strength = 1.2;
+  bloomPass.radius = 0.85;
+  composer.addPass(bloomPass);
+  
+  // Custom depth blur shader
+  const depthBlurShader = {
+    uniforms: {
+      tDiffuse: { value: null },
+      focus: { value: BLUR_FOCUS },
+      blur: { value: BLUR_AMOUNT }
+    },
+    vertexShader: `
+      varying vec2 vUv;
+      void main() {
+        vUv = uv;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: `
+      uniform sampler2D tDiffuse;
+      uniform float focus;
+      uniform float blur;
+      varying vec2 vUv;
+      
+      void main() {
+        vec4 color = texture2D(tDiffuse, vUv);
+        
+        // Add radial blur from center
+        vec2 center = vec2(0.5, 0.5);
+        float dist = distance(vUv, center);
+        float blurAmount = smoothstep(0.2, 0.8, dist) * blur;
+        
+        // Sample surrounding pixels for blur
+        vec4 blurred = color;
+        for (float i = -2.0; i <= 2.0; i += 1.0) {
+          for (float j = -2.0; j <= 2.0; j += 1.0) {
+            vec2 offset = vec2(i, j) * blurAmount;
+            blurred += texture2D(tDiffuse, vUv + offset);
+          }
+        }
+        blurred /= 25.0;
+        
+        // Mix original and blurred based on distance from center
+        gl_FragColor = mix(color, blurred, smoothstep(0.1, 0.7, dist));
+      }
+    `
+  };
+  
+  const depthBlurPass = new ShaderPass(depthBlurShader);
+  composer.addPass(depthBlurPass);
+
+  const neurons = [];
+  const neuronMap = new Map(); // Map neuron ID to neuron object
+  const pulseTimers = new Map();
+  const connections = new Set(); // Use Set to avoid duplicates
+  const mergingNeurons = new Map(); // Track neurons being merged
+  const adjacencyMap = new Map(); // Map neuron ID to Set of connected neuron IDs
+  let nextNeuronId = 0;
+
+  // Create a group to hold all neurons - this will be our elongated sphere
+  const neuronGroup = new THREE.Group();
+  scene.add(neuronGroup);
+
+  // Create thicker lines using cylinders for synapses
+  const synapseGroup = new THREE.Group();
+  neuronGroup.add(synapseGroup);
+  
+  // We'll still use line segments for now but with enhanced material
+  const lineMaterial = new THREE.LineBasicMaterial({ 
+    color: SYNAPSE_COLOR, 
+    transparent: true, 
+    opacity: 0.25,  // Slightly more visible
+    blending: THREE.AdditiveBlending
+  });
+  const MAX_CONNECTIONS = 30000;
+  const lineGeometry = new THREE.BufferGeometry();
+  const linePositions = new Float32Array(MAX_CONNECTIONS * 2 * 3);
+  const lineMesh = new THREE.LineSegments(lineGeometry, lineMaterial);
+  neuronGroup.add(lineMesh);
+
+  function createNeuron(x, y, z) {
+    const geo = new THREE.SphereGeometry(0.15, 12, 12);
+    const mat = new THREE.MeshBasicMaterial({ 
+      color: new THREE.Color().setHSL(NEURON_HUE, NEURON_SATURATION, NEURON_LIGHTNESS),
+      transparent: true,
+      opacity: 0.7  // Slightly translucent neurons
+    });
+    const sphere = new THREE.Mesh(geo, mat);
+    const id = nextNeuronId++;
+    
+    sphere.position.set(x, y, z);
+    sphere.userData.id = id;
+    // No velocity needed - we'll use positional animation instead
+    sphere.userData.baseScale = 1;  // Default base scale
+    sphere.userData.originalMaterial = mat;  // Store original material
+    
+    neuronGroup.add(sphere); // Add to group instead of scene
+    neurons.push(sphere);
+    neuronMap.set(id, sphere);
+    adjacencyMap.set(id, new Set());
+    pulseTimers.set(sphere, Math.random() * Math.PI * 2);
+    
+    return sphere;
+  }
+
+  // Create neurons in a filled ellipsoid volume
+  for (let i = 0; i < NEURON_COUNT; i++) {
+    // Random point inside ellipsoid using rejection sampling
+    let x, y, z;
+    let isInside = false;
+    
+    while (!isInside) {
+      // Generate random point in bounding box
+      x = (Math.random() - 0.5) * 2 * BASE_RADIUS * 3.5;
+      y = (Math.random() - 0.5) * 2 * BASE_RADIUS * 1.0;
+      z = (Math.random() - 0.5) * 2 * BASE_RADIUS * 1.5;
+      
+      // Check if point is inside ellipsoid
+      const ellipsoidCheck = (x / (BASE_RADIUS * 3.5)) ** 2 + 
+                            (y / (BASE_RADIUS * 1.0)) ** 2 + 
+                            (z / (BASE_RADIUS * 1.5)) ** 2;
+      
+      if (ellipsoidCheck <= 1) {
+        // Add some noise to make it irregular
+        const noise = 0.8 + Math.random() * 0.4;
+        x *= noise;
+        y *= noise;
+        z *= noise;
+        isInside = true;
+      }
+    }
+    
+    createNeuron(x, y, z);
+  }
+
+  function createConnection(neuronId1, neuronId2) {
+    const adj1 = adjacencyMap.get(neuronId1);
+    const adj2 = adjacencyMap.get(neuronId2);
+    
+    // Safety check - both neurons must exist
+    if (!adj1 || !adj2) return;
+    
+    const key = neuronId1 < neuronId2 ? `${neuronId1}-${neuronId2}` : `${neuronId2}-${neuronId1}`;
+    connections.add(key);
+    adj1.add(neuronId2);
+    adj2.add(neuronId1);
+  }
+
+  function removeConnection(neuronId1, neuronId2) {
+    const key = neuronId1 < neuronId2 ? `${neuronId1}-${neuronId2}` : `${neuronId2}-${neuronId1}`;
+    connections.delete(key);
+    
+    const adj1 = adjacencyMap.get(neuronId1);
+    const adj2 = adjacencyMap.get(neuronId2);
+    
+    if (adj1) adj1.delete(neuronId2);
+    if (adj2) adj2.delete(neuronId1);
+  }
+
+  function initializeConnections() {
+    const minConnections = MIN_SYNAPSES_PER_EVENT;
+    const maxConnections = Math.max(5, minConnections);
+
+    for (const neuron1 of neurons) {
+      const id1 = neuron1.userData.id;
+      const distances = [];
+      
+      for (const neuron2 of neurons) {
+        const id2 = neuron2.userData.id;
+        if (id1 !== id2) {
+          const dist = neuron1.position.distanceToSquared(neuron2.position);
+          distances.push({ id: id2, dist });
+        }
+      }
+      
+      distances.sort((a, b) => a.dist - b.dist);
+      let connectionsMade = adjacencyMap.get(id1).size;
+      
+      // Ensure minimum connections
+      for (let k = 0; k < distances.length && connectionsMade < maxConnections; k++) {
+        const id2 = distances[k].id;
+        if (!adjacencyMap.get(id1).has(id2)) {
+          createConnection(id1, id2);
+          connectionsMade++;
+        }
+      }
+      
+      // Force minimum connections even if it means longer connections
+      if (connectionsMade < minConnections) {
+        for (let k = 0; k < distances.length && connectionsMade < minConnections; k++) {
+          const id2 = distances[k].id;
+          if (!adjacencyMap.get(id1).has(id2)) {
+            createConnection(id1, id2);
+            connectionsMade++;
+          }
+        }
+      }
+    }
+
+    // Update neuron sizes based on connections
+    for (const neuron of neurons) {
+      const id = neuron.userData.id;
+      const connectionCount = adjacencyMap.get(id).size;
+      const size = 0.15 + 0.05 * Math.min(connectionCount, MAX_SYNAPSES_PER_NEURON);
+      neuron.userData.baseScale = size;
+      neuron.scale.set(size, size, size);
+    }
+  }
+
+  function updateConnections() {
+    // First pass: handle merging for neurons that are too close
+    for (const neuron1 of neurons) {
+      const id1 = neuron1.userData.id;
+      if (mergingNeurons.has(id1)) continue;
+      
+      for (const neuron2 of neurons) {
+        const id2 = neuron2.userData.id;
+        if (id1 >= id2 || mergingNeurons.has(id2)) continue;
+        
+        const dist = neuron1.position.distanceTo(neuron2.position);
+        if (dist < MIN_SYNAPSE_DISTANCE && adjacencyMap.get(id1).has(id2)) {
+          // Start merge animation with random duration
+          const randomDuration = Math.random() * (MERGE_ANIMATION_MAX - MERGE_ANIMATION_MIN) + MERGE_ANIMATION_MIN;
+          mergingNeurons.set(id2, {
+            targetId: id1,
+            startPos: neuron2.position.clone(),
+            startTime: performance.now(),
+            duration: randomDuration
+          });
+        }
+      }
+    }
+
+    // Handle merge animations
+    const completedMerges = [];
+    for (const [mergingId, mergeData] of mergingNeurons) {
+      const mergingNeuron = neuronMap.get(mergingId);
+      const targetNeuron = neuronMap.get(mergeData.targetId);
+      
+      if (!mergingNeuron || !targetNeuron) {
+        completedMerges.push(mergingId);
+        continue;
+      }
+      
+      const progress = Math.min((performance.now() - mergeData.startTime) / mergeData.duration, 1);
+      const easeProgress = 1 - Math.pow(1 - progress, 3);
+      
+      if (progress < 1) {
+        // Animate position
+        mergingNeuron.position.lerpVectors(
+          mergeData.startPos,
+          targetNeuron.position,
+          easeProgress
+        );
+        // Animate scale
+        const baseScale = mergingNeuron.userData.baseScale || 1;
+        const scale = baseScale * (1 - easeProgress * 0.8);
+        mergingNeuron.scale.setScalar(scale);
+      } else {
+        // Merge complete - transfer all connections
+        const mergingConnections = adjacencyMap.get(mergingId);
+        const targetConnections = adjacencyMap.get(mergeData.targetId);
+        
+        if (mergingConnections && targetConnections) {
+          for (const connectedId of mergingConnections) {
+            if (connectedId !== mergeData.targetId) {
+              removeConnection(mergingId, connectedId);
+              createConnection(mergeData.targetId, connectedId);
+            }
+          }
+        }
+        
+        // Remove the merged neuron
+        neuronGroup.remove(mergingNeuron); // Remove from group instead of scene
+        neuronMap.delete(mergingId);
+        adjacencyMap.delete(mergingId);
+        const idx = neurons.indexOf(mergingNeuron);
+        if (idx > -1) neurons.splice(idx, 1);
+        
+        completedMerges.push(mergingId);
+        NEURON_COUNT--;
+      }
+    }
+    
+    // Clean up completed merges
+    for (const id of completedMerges) {
+      mergingNeurons.delete(id);
+    }
+
+    // Second pass: handle connections that are too long
+    const connectionsToProcess = Array.from(connections);
+    for (const connectionKey of connectionsToProcess) {
+      const [id1, id2] = connectionKey.split('-').map(Number);
+      const neuron1 = neuronMap.get(id1);
+      const neuron2 = neuronMap.get(id2);
+      
+      // Skip if either neuron doesn't exist or is being merged
+      if (!neuron1 || !neuron2 || mergingNeurons.has(id1) || mergingNeurons.has(id2)) {
+        continue;
+      }
+      
+      const dist = neuron1.position.distanceTo(neuron2.position);
+
+      if (dist > MAX_SYNAPSE_DISTANCE) {
+        // Remove old connection
+        removeConnection(id1, id2);
+        
+        // Create new neuron at midpoint
+        const mid = neuron1.position.clone().add(neuron2.position).multiplyScalar(0.5);
+        
+        const newNeuron = createNeuron(mid.x, mid.y, mid.z);
+        const newId = newNeuron.userData.id;
+        
+        // Store the midpoint as the original position for the new neuron
+        newNeuron.userData.originalPos = mid.clone();
+        NEURON_COUNT++;
+
+        // Add new connections
+        createConnection(id1, newId);
+        createConnection(id2, newId);
+        
+        // Check if original neurons need more connections after split
+        const neuronsNeedingConnections = [];
+        if (adjacencyMap.get(id1).size < MIN_SYNAPSES_PER_EVENT) {
+          neuronsNeedingConnections.push(id1);
+        }
+        if (adjacencyMap.get(id2).size < MIN_SYNAPSES_PER_EVENT) {
+          neuronsNeedingConnections.push(id2);
+        }
+        
+        // Find connections for neurons that dropped below minimum
+        for (const needyId of neuronsNeedingConnections) {
+          const needyNeuron = neuronMap.get(needyId);
+          const candidates = [];
+          
+          for (const [candidateId, candidateNeuron] of neuronMap) {
+            if (candidateId !== needyId && !adjacencyMap.get(needyId).has(candidateId)) {
+              const distToCandidate = needyNeuron.position.distanceTo(candidateNeuron.position);
+              if (distToCandidate < MAX_SYNAPSE_DISTANCE) {
+                candidates.push({ id: candidateId, dist: distToCandidate });
+              }
+            }
+          }
+          
+          candidates.sort((a, b) => a.dist - b.dist);
+          const connectionsNeeded = MIN_SYNAPSES_PER_EVENT - adjacencyMap.get(needyId).size;
+          
+          for (let c = 0; c < Math.min(connectionsNeeded, candidates.length); c++) {
+            createConnection(needyId, candidates[c].id);
+          }
+        }
+
+        // Add additional random connections to meet 4-8 synapse requirement
+        const additionalNeeded = MIN_SYNAPSES_PER_EVENT - 2; // We already have 2
+        const additionalMax = MAX_SYNAPSES_PER_EVENT - 2;
+        const additionalConnections = Math.floor(Math.random() * (additionalMax - additionalNeeded + 1)) + additionalNeeded;
+        
+        // Find nearby neurons to connect to
+        const candidates = [];
+        for (const [candidateId, candidateNeuron] of neuronMap) {
+          if (candidateId !== id1 && candidateId !== id2 && candidateId !== newId && 
+              !adjacencyMap.get(newId).has(candidateId)) {
+            const distToCandidate = newNeuron.position.distanceTo(candidateNeuron.position);
+            if (distToCandidate < MAX_SYNAPSE_DISTANCE) {
+              candidates.push({ id: candidateId, dist: distToCandidate });
+            }
+          }
+        }
+        
+        // Sort by distance and connect to nearest
+        candidates.sort((a, b) => a.dist - b.dist);
+        for (let c = 0; c < Math.min(additionalConnections, candidates.length); c++) {
+          createConnection(newId, candidates[c].id);
+        }
+        
+        // Update new neuron size based on final connection count
+        const finalConnectionCount = adjacencyMap.get(newId).size;
+        const size = 0.15 + 0.05 * Math.min(finalConnectionCount, MAX_SYNAPSES_PER_NEURON);
+        newNeuron.userData.baseScale = size;
+        newNeuron.scale.set(size, size, size);
+      }
+    }
+
+    // Draw all connections
+    let ptr = 0;
+    for (const connectionKey of connections) {
+      const [id1, id2] = connectionKey.split('-').map(Number);
+      const neuron1 = neuronMap.get(id1);
+      const neuron2 = neuronMap.get(id2);
+      
+      if (!neuron1 || !neuron2 || ptr + 6 > linePositions.length) continue;
+      
+      linePositions.set(neuron1.position.toArray(), ptr);
+      ptr += 3;
+      linePositions.set(neuron2.position.toArray(), ptr);
+      ptr += 3;
+    }
+
+    // Ensure all neurons have minimum connections
+    for (const [neuronId, neuron] of neuronMap) {
+      if (mergingNeurons.has(neuronId)) continue;
+      
+      const connectionCount = adjacencyMap.get(neuronId).size;
+      
+      // If neuron has less than minimum connections, grow new connections
+      if (connectionCount < MIN_SYNAPSES_PER_EVENT && connectionCount > 0) {
+        const candidates = [];
+        
+        // Find all other neurons
+        for (const [candidateId, candidateNeuron] of neuronMap) {
+          if (candidateId !== neuronId && !adjacencyMap.get(neuronId).has(candidateId) && 
+              !mergingNeurons.has(candidateId)) {
+            const dist = neuron.position.distanceTo(candidateNeuron.position);
+            candidates.push({ id: candidateId, dist: dist });
+          }
+        }
+        
+        // Sort by distance
+        candidates.sort((a, b) => a.dist - b.dist);
+        
+        // Calculate how many connections to add (3-5 to reach 4-8 total)
+        const currentConnections = connectionCount;
+        const minToAdd = Math.max(MIN_SYNAPSES_PER_EVENT - currentConnections, 3);
+        const maxToAdd = Math.min(MAX_SYNAPSES_PER_EVENT - currentConnections, 5);
+        const connectionsToAdd = Math.floor(Math.random() * (maxToAdd - minToAdd + 1)) + minToAdd;
+        
+        let connectionsAdded = 0;
+        
+        // First try to connect to neurons within normal range
+        for (let c = 0; c < candidates.length && connectionsAdded < connectionsToAdd; c++) {
+          if (candidates[c].dist < MAX_SYNAPSE_DISTANCE) {
+            createConnection(neuronId, candidates[c].id);
+            connectionsAdded++;
+          }
+        }
+        
+        // If we still need more connections, connect to further neurons (will cause splits later)
+        if (connectionsAdded < connectionsToAdd) {
+          for (let c = 0; c < candidates.length && connectionsAdded < connectionsToAdd; c++) {
+            if (candidates[c].dist >= MAX_SYNAPSE_DISTANCE) {
+              createConnection(neuronId, candidates[c].id);
+              connectionsAdded++;
+            }
+          }
+        }
+      }
+      
+      // Handle completely isolated neurons (0 connections)
+      if (connectionCount === 0 && neuronMap.size > MIN_SYNAPSES_PER_EVENT) {
+        // Find nearest neuron and merge
+        let nearestId = -1;
+        let minDist = Infinity;
+        
+        for (const [otherId, otherNeuron] of neuronMap) {
+          if (otherId !== neuronId && !mergingNeurons.has(otherId)) {
+            const dist = neuron.position.distanceTo(otherNeuron.position);
+            if (dist < minDist) {
+              minDist = dist;
+              nearestId = otherId;
+            }
+          }
+        }
+        
+        if (nearestId !== -1 && !mergingNeurons.has(neuronId)) {
+          const randomDuration = Math.random() * (MERGE_ANIMATION_MAX - MERGE_ANIMATION_MIN) + MERGE_ANIMATION_MIN;
+          mergingNeurons.set(neuronId, {
+            targetId: nearestId,
+            startPos: neuron.position.clone(),
+            startTime: performance.now(),
+            duration: randomDuration
+          });
+        }
+      }
+    }
+    
+    // Update all neuron sizes and colors
+    for (const [neuronId, neuron] of neuronMap) {
+      const connectionCount = adjacencyMap.get(neuronId).size;
+      const size = 0.15 + 0.05 * Math.min(connectionCount, MAX_SYNAPSES_PER_NEURON);
+      neuron.userData.baseScale = size;
+      
+      // Visual debug: Color neurons red if they have fewer than 4 connections
+      if (connectionCount < MIN_SYNAPSES_PER_EVENT && connectionCount > 0) {
+        neuron.material = new THREE.MeshBasicMaterial({ color: '#ff4444' });
+      } else {
+        neuron.material = neuron.userData.originalMaterial;
+      }
+    }
+
+    lineGeometry.setDrawRange(0, ptr / 3);
+    lineGeometry.setAttribute('position', new THREE.BufferAttribute(linePositions.slice(0, ptr), 3));
+    lineGeometry.attributes.position.needsUpdate = true;
+  }
+
+  let time = 0;
+  let lastDebugTime = 0;
+  
+  function debugConnectionCounts() {
+    const counts = {};
+    let minConnections = Infinity;
+    let maxConnections = 0;
+    let totalConnections = 0;
+    let neuronsWith0 = 0;
+    let neuronsWith1to3 = 0;
+    
+    for (const [id, adjacency] of adjacencyMap) {
+      const count = adjacency.size;
+      counts[count] = (counts[count] || 0) + 1;
+      minConnections = Math.min(minConnections, count);
+      maxConnections = Math.max(maxConnections, count);
+      totalConnections += count;
+      
+      if (count === 0) neuronsWith0++;
+      else if (count < MIN_SYNAPSES_PER_EVENT) neuronsWith1to3++;
+    }
+    
+    console.log('Connection Distribution:', counts);
+    console.log(`Total neurons: ${neuronMap.size}, Total connections: ${connections.size}`);
+    console.log(`Min connections: ${minConnections}, Max connections: ${maxConnections}`);
+    console.log(`Neurons with 0 connections: ${neuronsWith0}`);
+    console.log(`Neurons with 1-3 connections: ${neuronsWith1to3}`);
+    console.log('---');
+  }
+  
+  function animate() {
+    const delta = 0.016;
+    time += delta;
+    
+    // Debug every 5 seconds
+    if (time - lastDebugTime > 5) {
+      lastDebugTime = time;
+      debugConnectionCounts();
+    }
+
+    for (const n of neurons) {
+      if (!n.userData.id) continue; // Skip if neuron was removed
+      
+      const p = n.position;
+      const originalPos = n.userData.originalPos || p.clone();
+      
+      // Store original position if not already stored
+      if (!n.userData.originalPos) {
+        n.userData.originalPos = p.clone();
+      }
+      
+      // Create organic movement around original position
+      const wobbleX = Math.sin(time * 0.5 + n.userData.id * 0.1) * 0.3;
+      const wobbleY = Math.cos(time * 0.4 + n.userData.id * 0.2) * 0.2;
+      const wobbleZ = Math.sin(time * 0.3 + n.userData.id * 0.15) * 0.25;
+      
+      // Breathing effect - expand and contract the entire mesh
+      const breathe = 1 + Math.sin(time * 0.2) * 0.05;
+      
+      // Update position relative to original
+      p.x = originalPos.x * breathe + wobbleX;
+      p.y = originalPos.y * breathe + wobbleY;
+      p.z = originalPos.z * breathe + wobbleZ;
+
+      if (!n.userData.baseScale) continue; // Skip if neuron is being merged
+      
+      const pulsePhase = pulseTimers.get(n) || 0;
+      const baseScale = n.userData.baseScale;
+      // Individual neuron pulsing with activity simulation
+      const activity = Math.sin(time * 2 + pulsePhase) * 0.5 + 0.5; // 0 to 1
+      const pulse = baseScale * (1 + activity * 0.15);
+      n.scale.setScalar(pulse);
+      
+      // Change brightness based on activity - keep in neon range
+      const brightness = NEURON_LIGHTNESS * (0.8 + activity * 0.4);
+      n.material.color.setHSL(NEURON_HUE, NEURON_SATURATION, brightness);
+    }
+
+    updateConnections();
+    
+    // Rotate the group using configurable speeds
+    neuronGroup.rotation.x += ROTATION_SPEED_X;
+    neuronGroup.rotation.y += ROTATION_SPEED_Y;
+    neuronGroup.rotation.z += ROTATION_SPEED_Z;
+
+    composer.render();
+    requestAnimationFrame(animate);
+  }
+
+  initializeConnections();
+  console.log(`Created ${neurons.length} neurons with ${connections.size} connections`);
+  animate();
+
+  window.addEventListener('resize', () => {
+    const newRect = container.getBoundingClientRect();
+    camera.aspect = newRect.width / newRect.height;
+    camera.updateProjectionMatrix();
+    renderer.setSize(newRect.width, newRect.height);
+    composer.setSize(newRect.width, newRect.height);
+  });
+</script>
+</body>
+</html>
