@@ -1,6 +1,7 @@
 /* Root Variables */
 :root {
-  /* Font Sizes - Fluid Typography */
+  /* Font Sizes - Fluid Typography 
+     Optimized for 16:10 displays (2560×1600, 1920×1200, 1680×1050, 1280×800) */
   --fs-hero: 4.375vw; /* 84px at 1920px */
   --fs-body-lg: 1.354vw; /* 26px at 1920px */
   --fs-body: 0.938vw; /* 18px at 1920px */
@@ -297,7 +298,14 @@ main {
 /* ========================================
    HERO SECTION - BASE STYLES
    ======================================== */
-/* These are the base styles that will be modified by media queries */
+/* Base styles optimized for 16:10 aspect ratio displays:
+   - 2560×1600 (native design resolution)
+   - 1920×1200 (standard 16:10)
+   - 1680×1050 (common 16:10)
+   - 1280×800 (marginally)
+   
+   All measurements use vw units calculated for 16:10 viewports.
+   Other aspect ratios require media query adjustments below. */
 
 /* Main Container & Background Elements */
 .hero-section {
@@ -1124,6 +1132,11 @@ main {
 /* ========================================
    HERO SECTION - RESPONSIVE VARIATIONS
    ======================================== */
+/* Adjustments for displays that differ from 16:10 base design:
+   - 16:9 displays (2560×1440, 1920×1080, 1600×900, 1366×768)
+   - 21:9 ultrawide displays
+   - Mobile devices (various ratios)
+   - Constrained viewports with browser chrome */
 
 /* Hide scroll indicator on touch devices */
 @media (hover: none) {
@@ -1150,8 +1163,32 @@ main {
 }
 
 /* 16:9 Aspect Ratio Optimizations */
-@media (min-aspect-ratio: 16/9) and (max-height: 700px) {
-  /* Styles for constrained 16:9 displays will go here */
+/* Note: 16:9 displays have less vertical space than 16:10, requiring:
+   - Reduced vertical padding/margins
+   - Smaller font sizes
+   - Compressed spacing between elements
+   - Possible hiding of non-critical elements on very constrained viewports */
+
+/* 16:9 displays - detected by specific resolutions */
+@media (min-width: 1920px) and (max-height: 1080px), 
+       (min-width: 2560px) and (max-height: 1440px),
+       (min-width: 2048px) and (max-height: 1152px),
+       (min-width: 1600px) and (max-height: 900px),
+       (min-width: 1440px) and (max-height: 810px),
+       (min-width: 1366px) and (max-height: 768px),
+       (min-width: 1280px) and (max-height: 720px) {
+  :root {
+    /* Font sizes reduced by 35% for 16:9 displays */
+    --fs-hero: 2.844vw; /* 35% reduction from 4.375vw */
+    --fs-body-lg: 0.880vw; /* 35% reduction from 1.354vw */
+    --fs-body: 0.610vw; /* 35% reduction from 0.938vw */
+    --fs-small: 0.541vw; /* 35% reduction from 0.833vw */
+  }
+  
+  /* Move hero content down by 50px (2.604vw at 1920px) */
+  .hero-content {
+    margin-top: 3.5vw; /* Push down from centered position */
+  }
 }
 
 /* ========================================
