@@ -171,6 +171,7 @@ const ComparisonSection = () => {
           </div>
         </div>
       </div>
+      
     </section>
   );
 };
