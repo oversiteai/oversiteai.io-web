@@ -289,15 +289,14 @@ main {
 /* Hero Section Styles */
 .hero-section {
   position: relative;
-  flex: 1;
+  height: 100vh; /* Use full viewport height */
   display: flex;
   align-items: center;
   justify-content: center;
   background: var(--Dark-Base);
   overflow: hidden;
-  margin-top: 5vw;
-  padding-bottom: 2vw;
-  min-height: 0;
+  padding-top: 5vw; /* Account for fixed header */
+  box-sizing: border-box; /* Include padding in height calculation */
 }
 
 /* Hero Video Background */
