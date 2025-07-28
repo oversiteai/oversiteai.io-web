@@ -262,21 +262,26 @@ const SolutionsSection = () => {
                 border: '1px solid var(--Blue)',
                 color: currentPage === 0 ? 'var(--Gray)' : 'var(--Blue)',
                 opacity: currentPage === 0 ? 0.5 : 1,
-                cursor: currentPage === 0 ? 'not-allowed' : 'pointer'
+                cursor: currentPage === 0 ? 'not-allowed' : 'pointer',
+                minWidth: '8vw'
               }}
             >
               Previous
             </button>
             <button 
-              className="btn btn-primary" 
+              className="btn btn-secondary" 
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage >= totalPages - 1}
               style={{
+                background: 'transparent', 
+                border: '1px solid var(--Blue)',
+                color: currentPage >= totalPages - 1 ? 'var(--Gray)' : 'var(--Blue)',
                 opacity: currentPage >= totalPages - 1 ? 0.5 : 1,
-                cursor: currentPage >= totalPages - 1 ? 'not-allowed' : 'pointer'
+                cursor: currentPage >= totalPages - 1 ? 'not-allowed' : 'pointer',
+                minWidth: '8vw'
               }}
             >
-              Next Solutions
+              Next
             </button>
           </div>
         </div>
