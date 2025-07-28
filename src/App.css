@@ -1169,14 +1169,14 @@ main {
    - Compressed spacing between elements
    - Possible hiding of non-critical elements on very constrained viewports */
 
-/* 16:9 displays - detected by specific resolutions */
-@media (min-width: 1920px) and (max-height: 1080px), 
-       (min-width: 2560px) and (max-height: 1440px),
-       (min-width: 2048px) and (max-height: 1152px),
-       (min-width: 1600px) and (max-height: 900px),
-       (min-width: 1440px) and (max-height: 810px),
-       (min-width: 1366px) and (max-height: 768px),
-       (min-width: 1280px) and (max-height: 720px) {
+/* 16:9 displays - detected by aspect ratio with tolerance */
+/* This catches displays with aspect ratios between 1.7:1 and 1.85:1
+   16:9 = 1.777..., so this provides tolerance for:
+   - Browser UI elements
+   - Taskbars/menu bars  
+   - Minor resolution variations
+   - Scaling differences */
+@media (min-width: 1200px) and (max-aspect-ratio: 2.30) and (min-aspect-ratio: 1.7) {
   :root {
     /* Font sizes reduced by 35% for 16:9 displays */
     --fs-hero: 2.844vw; /* 35% reduction from 4.375vw */
