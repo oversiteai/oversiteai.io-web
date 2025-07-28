@@ -1,9 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const Header = () => {
   const [underlineStyle, setUnderlineStyle] = useState({});
   const navRef = useRef(null);
   const navItemRefs = useRef([]);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
 
   const handleMouseEnter = (index) => {
     const navItem = navItemRefs.current[index];
@@ -28,16 +32,20 @@ const Header = () => {
         <div 
           className="logo-section"
           onClick={() => {
-            window.scrollTo({
-              top: 0,
-              behavior: 'smooth'
-            });
+            if (isHomePage) {
+              window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+              });
+            } else {
+              navigate('/');
+            }
           }}
           style={{ cursor: 'pointer' }}
         >
           <div className="logo-wrapper">
             <img 
-              src="images/logo.png" 
+              src="/oversiteai.io-web/images/logo.png" 
               alt="OverSiteAI Logo" 
               className="logo-image"
             />
@@ -55,15 +63,31 @@ const Header = () => {
             ref={el => navItemRefs.current[0] = el}
             onMouseEnter={() => handleMouseEnter(0)}
             onClick={() => {
-              const element = document.querySelector('.footer');
-              if (element) {
-                const headerOffset = window.innerWidth * 0.02;
-                const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
-                const offsetPosition = elementPosition - headerOffset - (window.innerWidth * 0.01);
-                window.scrollTo({
-                  top: offsetPosition,
-                  behavior: 'smooth'
-                });
+              if (isHomePage) {
+                const element = document.querySelector('.footer');
+                if (element) {
+                  const headerOffset = window.innerWidth * 0.02;
+                  const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+                  const offsetPosition = elementPosition - headerOffset - (window.innerWidth * 0.01);
+                  window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                  });
+                }
+              } else {
+                navigate('/');
+                setTimeout(() => {
+                  const element = document.querySelector('.footer');
+                  if (element) {
+                    const headerOffset = window.innerWidth * 0.02;
+                    const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+                    const offsetPosition = elementPosition - headerOffset - (window.innerWidth * 0.01);
+                    window.scrollTo({
+                      top: offsetPosition,
+                      behavior: 'smooth'
+                    });
+                  }
+                }, 700);
               }
             }}
           >
@@ -74,15 +98,31 @@ const Header = () => {
             ref={el => navItemRefs.current[1] = el}
             onMouseEnter={() => handleMouseEnter(1)}
             onClick={() => {
-              const element = document.querySelector('.solutions-section');
-              if (element) {
-                const headerOffset = window.innerWidth * 0.02;
-                const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
-                const offsetPosition = elementPosition - headerOffset - (window.innerWidth * 0.01);
-                window.scrollTo({
-                  top: offsetPosition,
-                  behavior: 'smooth'
-                });
+              if (isHomePage) {
+                const element = document.querySelector('.solutions-section');
+                if (element) {
+                  const headerOffset = window.innerWidth * 0.02;
+                  const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+                  const offsetPosition = elementPosition - headerOffset - (window.innerWidth * 0.01);
+                  window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                  });
+                }
+              } else {
+                navigate('/');
+                setTimeout(() => {
+                  const element = document.querySelector('.solutions-section');
+                  if (element) {
+                    const headerOffset = window.innerWidth * 0.02;
+                    const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+                    const offsetPosition = elementPosition - headerOffset - (window.innerWidth * 0.01);
+                    window.scrollTo({
+                      top: offsetPosition,
+                      behavior: 'smooth'
+                    });
+                  }
+                }, 700);
               }
             }}
           >
@@ -93,15 +133,31 @@ const Header = () => {
             ref={el => navItemRefs.current[2] = el}
             onMouseEnter={() => handleMouseEnter(2)}
             onClick={() => {
-              const element = document.querySelector('.tech-section');
-              if (element) {
-                const headerOffset = window.innerWidth * 0.02;
-                const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
-                const offsetPosition = elementPosition - headerOffset - (window.innerWidth * 0.01);
-                window.scrollTo({
-                  top: offsetPosition,
-                  behavior: 'smooth'
-                });
+              if (isHomePage) {
+                const element = document.querySelector('.tech-section');
+                if (element) {
+                  const headerOffset = window.innerWidth * 0.02;
+                  const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+                  const offsetPosition = elementPosition - headerOffset - (window.innerWidth * 0.01);
+                  window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                  });
+                }
+              } else {
+                navigate('/');
+                setTimeout(() => {
+                  const element = document.querySelector('.tech-section');
+                  if (element) {
+                    const headerOffset = window.innerWidth * 0.02;
+                    const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+                    const offsetPosition = elementPosition - headerOffset - (window.innerWidth * 0.01);
+                    window.scrollTo({
+                      top: offsetPosition,
+                      behavior: 'smooth'
+                    });
+                  }
+                }, 700);
               }
             }}
           >

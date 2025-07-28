@@ -1,0 +1,11 @@
+{
+  "id": 7,
+  "title": "Predictive Maintenance Analytics",
+  "subtitle": "AI-driven maintenance scheduling that prevents failures before they occur.",
+  "images": [
+    "/oversiteai.io-web/images/maintenance1.jpg",
+    "/oversiteai.io-web/images/maintenance2.jpg"
+  ],
+  "body": "<h2>Prevent Failures, Maximize Uptime</h2><p>Our Predictive Maintenance Analytics platform uses machine learning to analyze equipment performance data and predict failures before they happen. Move from reactive to proactive maintenance strategies.</p><h3>Advanced Analytics</h3><ul><li><strong>Vibration Analysis</strong> - Detect anomalies in pump and compressor performance</li><li><strong>Temperature Monitoring</strong> - Track heat signatures to identify developing issues</li><li><strong>Pressure Trending</strong> - Analyze pressure data to predict seal and valve failures</li><li><strong>Flow Rate Analytics</strong> - Identify restrictions and blockages early</li></ul><h3>Maintenance Optimization</h3><p>Our AI algorithms analyze historical data, current conditions, and manufacturer specifications to create optimal maintenance schedules that maximize equipment life while minimizing downtime.</p><h3>ROI Impact</h3><p>Clients typically see a 40% reduction in unplanned downtime and a 25% extension in equipment life through predictive maintenance strategies.</p>",
+  "tags": ["Predictive Analytics", "Maintenance", "AI", "Equipment Health"]
+}

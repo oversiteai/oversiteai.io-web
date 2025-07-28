@@ -1,0 +1,11 @@
+{
+  "id": 3,
+  "title": "Real-Time Well Verification",
+  "subtitle": "Instant Compliance Validation for Injection Operations",
+  "images": [
+    "/oversiteai.io-web/images/realtime.png",
+    "/oversiteai.io-web/images/well_verification.jpg"
+  ],
+  "body": "<h2>Ensuring Compliance with Every Injection</h2><p>The application cross-references each injection site against an up-to-date database of permitted wells, providing instant verification before any fluid disposal operation begins. This proactive approach prevents violations before they occur.</p><h3>Verification Process</h3><ul><li><strong>Database Integration:</strong> Real-time connection to state and federal permit databases</li><li><strong>GPS Correlation:</strong> Automatic matching of location to permitted well coordinates</li><li><strong>Permit Status:</strong> Instant verification of current permit validity and restrictions</li><li><strong>Volume Limits:</strong> Automatic checking against daily and monthly injection limits</li></ul><h3>Compliance Benefits</h3><p>Since implementation, our clients have achieved 100% compliance rates with zero permit violations. The system has prevented over 500 potential violations through proactive alerts, saving operators millions in potential fines and protecting their operational licenses.</p><h3>Advanced Features</h3><p>The verification system includes predictive analytics that forecast permit expirations and volume limit approaches, allowing operators to plan ahead and maintain continuous compliance.</p>",
+  "tags": ["Compliance", "Well Verification", "Real-time", "Permits"]
+}

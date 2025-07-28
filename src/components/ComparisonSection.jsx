@@ -88,8 +88,8 @@ const ComparisonSection = () => {
   return (
     <section className="comparison-section">
       <div className="comparison-decorations">
-        <img src="images/torus.svg" alt="" className="decoration-torus" />
-        <img src="images/sphere.svg" alt="" className="decoration-sphere" />
+        <img src="/oversiteai.io-web/images/torus.svg" alt="" className="decoration-torus" />
+        <img src="/oversiteai.io-web/images/sphere.svg" alt="" className="decoration-sphere" />
       </div>
       <div className="container">
         <div className="section-header">
@@ -168,30 +168,30 @@ const ComparisonSection = () => {
           <div className="logo-banner">
             <div className="logos-scroll">
               {/* First set of logos */}
-              <img src="images/partners/activecampaign.svg" alt="ActiveCampaign" className="partner-logo" />
-              <img src="images/partners/attentive.svg" alt="Attentive" className="partner-logo" />
-              <img src="images/partners/gumroad.svg" alt="Gumroad" className="partner-logo" />
-              <img src="images/partners/lattice.svg" alt="Lattice" className="partner-logo" />
-              <img src="images/partners/paypal.svg" alt="PayPal" className="partner-logo" />
-              <img src="images/partners/spotify.svg" alt="Spotify" className="partner-logo" />
-              <img src="images/partners/squarespace.svg" alt="Squarespace" className="partner-logo" />
-              <img src="images/partners/zapier.svg" alt="Zapier" className="partner-logo" />
+              <img src="/oversiteai.io-web/images/partners/activecampaign.svg" alt="ActiveCampaign" className="partner-logo" />
+              <img src="/oversiteai.io-web/images/partners/attentive.svg" alt="Attentive" className="partner-logo" />
+              <img src="/oversiteai.io-web/images/partners/gumroad.svg" alt="Gumroad" className="partner-logo" />
+              <img src="/oversiteai.io-web/images/partners/lattice.svg" alt="Lattice" className="partner-logo" />
+              <img src="/oversiteai.io-web/images/partners/paypal.svg" alt="PayPal" className="partner-logo" />
+              <img src="/oversiteai.io-web/images/partners/spotify.svg" alt="Spotify" className="partner-logo" />
+              <img src="/oversiteai.io-web/images/partners/squarespace.svg" alt="Squarespace" className="partner-logo" />
+              <img src="/oversiteai.io-web/images/partners/zapier.svg" alt="Zapier" className="partner-logo" />
               
               {/* Duplicate set for seamless loop */}
-              <img src="images/partners/activecampaign.svg" alt="ActiveCampaign" className="partner-logo" />
-              <img src="images/partners/attentive.svg" alt="Attentive" className="partner-logo" />
-              <img src="images/partners/gumroad.svg" alt="Gumroad" className="partner-logo" />
-              <img src="images/partners/lattice.svg" alt="Lattice" className="partner-logo" />
-              <img src="images/partners/paypal.svg" alt="PayPal" className="partner-logo" />
-              <img src="images/partners/spotify.svg" alt="Spotify" className="partner-logo" />
-              <img src="images/partners/squarespace.svg" alt="Squarespace" className="partner-logo" />
-              <img src="images/partners/zapier.svg" alt="Zapier" className="partner-logo" />
+              <img src="/oversiteai.io-web/images/partners/activecampaign.svg" alt="ActiveCampaign" className="partner-logo" />
+              <img src="/oversiteai.io-web/images/partners/attentive.svg" alt="Attentive" className="partner-logo" />
+              <img src="/oversiteai.io-web/images/partners/gumroad.svg" alt="Gumroad" className="partner-logo" />
+              <img src="/oversiteai.io-web/images/partners/lattice.svg" alt="Lattice" className="partner-logo" />
+              <img src="/oversiteai.io-web/images/partners/paypal.svg" alt="PayPal" className="partner-logo" />
+              <img src="/oversiteai.io-web/images/partners/spotify.svg" alt="Spotify" className="partner-logo" />
+              <img src="/oversiteai.io-web/images/partners/squarespace.svg" alt="Squarespace" className="partner-logo" />
+              <img src="/oversiteai.io-web/images/partners/zapier.svg" alt="Zapier" className="partner-logo" />
               
               {/* Third set to ensure no gaps */}
-              <img src="images/partners/activecampaign.svg" alt="ActiveCampaign" className="partner-logo" />
-              <img src="images/partners/attentive.svg" alt="Attentive" className="partner-logo" />
-              <img src="images/partners/gumroad.svg" alt="Gumroad" className="partner-logo" />
-              <img src="images/partners/lattice.svg" alt="Lattice" className="partner-logo" />
+              <img src="/oversiteai.io-web/images/partners/activecampaign.svg" alt="ActiveCampaign" className="partner-logo" />
+              <img src="/oversiteai.io-web/images/partners/attentive.svg" alt="Attentive" className="partner-logo" />
+              <img src="/oversiteai.io-web/images/partners/gumroad.svg" alt="Gumroad" className="partner-logo" />
+              <img src="/oversiteai.io-web/images/partners/lattice.svg" alt="Lattice" className="partner-logo" />
             </div>
           </div>
         </div>

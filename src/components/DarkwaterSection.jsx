@@ -144,7 +144,7 @@ const DarkwaterSection = () => {
             
             <div className={`terminal-visualization ${videoEnded ? 'fade-in' : ''}`}>
               <img 
-                src="images/darkwater4.png" 
+                src="/oversiteai.io-web/images/darkwater4.png" 
                 alt="Network visualization" 
                 className="network-viz"
               />
