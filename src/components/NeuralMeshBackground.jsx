@@ -5,14 +5,14 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 
-const NeuralMeshBackground = () => {
+const NeuralMeshBackground = ({ disableGPU = false }) => {
   const mountRef = useRef(null);
   
   useEffect(() => {
     if (!mountRef.current) return;
     
     // Configuration - exactly from neural.html
-    let NEURON_COUNT = 800; // Reduced from 3000 for background performance
+    let NEURON_COUNT = disableGPU ? 200 : 800; // Reduced for CPU mode
     const BASE_RADIUS = 10;
     const MAX_SYNAPSES_PER_NEURON = 8;
     const MIN_SYNAPSES_PER_EVENT = 4;
@@ -45,10 +45,10 @@ const NeuralMeshBackground = () => {
     const SYNAPSE_COLOR = '#4a7ba7';
     
     // Electrical spark configuration
-    const MAX_CONCURRENT_SPARKS = 5;
-    const SPARK_SPEED = 0.02;
+    const MAX_CONCURRENT_SPARKS = disableGPU ? 2 : 5;
+    const SPARK_SPEED = disableGPU ? 0.03 : 0.02;
     const SPARK_COLOR = '#FFFFFF';
-    const SPARK_SIZE = 0.08;
+    const SPARK_SIZE = disableGPU ? 0.1 : 0.08;
     
     const container = mountRef.current;
     const containerRect = container.getBoundingClientRect();
@@ -59,19 +59,27 @@ const NeuralMeshBackground = () => {
     const camera = new THREE.PerspectiveCamera(50, containerRect.width / containerRect.height, 0.1, 100);
     camera.position.set(CAMERA_POSITION_X, CAMERA_POSITION_Y, CAMERA_POSITION_Z);
     
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    const renderer = new THREE.WebGLRenderer({ 
+      antialias: !disableGPU, 
+      alpha: true,
+      powerPreference: disableGPU ? "low-power" : "high-performance"
+    });
     renderer.setSize(containerRect.width, containerRect.height);
+    renderer.setPixelRatio(disableGPU ? 1 : window.devicePixelRatio);
     container.appendChild(renderer.domElement);
     
-    const composer = new EffectComposer(renderer);
-    composer.addPass(new RenderPass(scene, camera));
-    
-    // Bloom for glow effect
-    const bloomPass = new UnrealBloomPass(new THREE.Vector2(containerRect.width, containerRect.height), 1.5, 0.4, 0.85);
-    bloomPass.threshold = 0;
-    bloomPass.strength = 1.2;
-    bloomPass.radius = 0.85;
-    composer.addPass(bloomPass);
+    let composer;
+    if (!disableGPU) {
+      composer = new EffectComposer(renderer);
+      composer.addPass(new RenderPass(scene, camera));
+      
+      // Bloom for glow effect
+      const bloomPass = new UnrealBloomPass(new THREE.Vector2(containerRect.width, containerRect.height), 1.5, 0.4, 0.85);
+      bloomPass.threshold = 0;
+      bloomPass.strength = 1.2;
+      bloomPass.radius = 0.85;
+      composer.addPass(bloomPass);
+    }
     
     // Custom depth blur shader
     const depthBlurShader = {
@@ -117,8 +125,10 @@ const NeuralMeshBackground = () => {
       `
     };
     
-    const depthBlurPass = new ShaderPass(depthBlurShader);
-    composer.addPass(depthBlurPass);
+    if (!disableGPU && composer) {
+      const depthBlurPass = new ShaderPass(depthBlurShader);
+      composer.addPass(depthBlurPass);
+    }
     
     const neurons = [];
     const neuronMap = new Map();
@@ -393,7 +403,11 @@ const NeuralMeshBackground = () => {
       neuronGroup.rotation.y += ROTATION_SPEED_Y;
       neuronGroup.rotation.z += ROTATION_SPEED_Z;
       
-      composer.render();
+      if (disableGPU) {
+        renderer.render(scene, camera);
+      } else if (composer) {
+        composer.render();
+      }
       requestAnimationFrame(animate);
     }
     
@@ -406,7 +420,9 @@ const NeuralMeshBackground = () => {
       camera.aspect = newRect.width / newRect.height;
       camera.updateProjectionMatrix();
       renderer.setSize(newRect.width, newRect.height);
-      composer.setSize(newRect.width, newRect.height);
+      if (!disableGPU && composer) {
+        composer.setSize(newRect.width, newRect.height);
+      }
     };
     
     window.addEventListener('resize', handleResize);
@@ -417,7 +433,7 @@ const NeuralMeshBackground = () => {
       container.removeChild(renderer.domElement);
       renderer.dispose();
     };
-  }, []);
+  }, [disableGPU]);
   
   return <div ref={mountRef} className="neural-mesh-background" />;
 };

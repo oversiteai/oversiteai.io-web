@@ -1798,17 +1798,20 @@ main {
 .neural-mesh-background {
   position: absolute;
   top: 0;
-  left: 0;
-  width: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100vw;
   height: 100%;
   z-index: 0;
   opacity: 0.3; /* Subtle background effect */
   pointer-events: none;
 }
 
-.neural-mesh-background canvas {
+.neural-mesh-background canvas,
+.neural-mesh-background video {
   width: 100% !important;
   height: 100% !important;
+  object-fit: cover;
 }
 
 /* Ensure metrics section has relative positioning */

@@ -1,5 +1,4 @@
 import React from 'react';
-import NeuralMeshBackground from './NeuralMeshBackground';
 
 const MetricsSection = () => {
   const metrics = [
@@ -49,7 +48,19 @@ const MetricsSection = () => {
 
   return (
     <section className="metrics-section">
-      <NeuralMeshBackground />
+      <video 
+        className="neural-mesh-background"
+        autoPlay
+        loop
+        muted
+        playsInline
+        preload="auto"
+        onError={(e) => console.error('Video error:', e)}
+        onLoadedData={() => console.log('Video loaded successfully')}
+      >
+        <source src="video/neural_net.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
       <div className="container">
         <div className="section-header">
           <div className="section-badge">Field-Proven Metrics That Matter</div>
@@ -58,6 +69,22 @@ const MetricsSection = () => {
             Our platform doesn't just promise impact—it delivers it. From barrels tracked to uptime achieved, 
             these numbers reflect the real results our partners rely on every day.
           </p>
+          {/* GPU Toggle for testing - uncomment to enable */}
+          {/* <button 
+            onClick={() => setDisableGPU(!disableGPU)}
+            style={{
+              marginTop: '20px',
+              padding: '10px 20px',
+              backgroundColor: disableGPU ? '#dc3545' : '#28a745',
+              color: 'white',
+              border: 'none',
+              borderRadius: '5px',
+              cursor: 'pointer',
+              fontSize: '14px'
+            }}
+          >
+            GPU: {disableGPU ? 'DISABLED' : 'ENABLED'} (Click to toggle)
+          </button> */}
         </div>
         
         <div className="metrics-grid">
