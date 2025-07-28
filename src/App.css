@@ -294,7 +294,12 @@ main {
   box-shadow: 0 0.5vw 1.5vw rgba(78, 195, 211, 0.4);
 }
 
-/* Hero Section Styles */
+/* ========================================
+   HERO SECTION - BASE STYLES
+   ======================================== */
+/* These are the base styles that will be modified by media queries */
+
+/* Main Container & Background Elements */
 .hero-section {
   position: relative;
   height: 100vh; /* Use full viewport height */
@@ -451,6 +456,7 @@ main {
   z-index: 4;
 }
 
+/* Drone Feed Elements */
 .drone-feed-card {
   position: relative;
   width: 22.5vw;
@@ -691,6 +697,7 @@ main {
   font-weight: 400;
 }
 
+/* Scan Info */
 .scan-info {
   position: absolute;
   right: -3vw; /* Align with drone-feed-card right edge */
@@ -729,6 +736,7 @@ main {
   text-align: left;
 }
 
+/* Telemetry Container */
 .telemetry-container {
   position: relative;
   right: 45%;
@@ -847,6 +855,7 @@ main {
   white-space: nowrap;
 }
 
+/* Content Container */
 .hero-content {
   position: relative;
   z-index: 5;
@@ -857,13 +866,14 @@ main {
 
 .drone-feed-container {
   position: absolute;
-  top: 3.64vw; /* Align with title baseline */
-  right: -20.5vw; /* Push to viewport right edge */
+  top: 5.50vw; /* Align with title baseline */
+  right: -20.0vw; /* Push to viewport right edge */
   width: 19.5vw;
   height: auto; /* Allow container to expand for content */
   z-index: 20;
 }
 
+/* Hero Elements */
 .hero-badge {
   display: inline-flex;
   padding: 0.5vw 1.5vw;
@@ -921,6 +931,7 @@ main {
   margin-bottom: 1.5vw;
 }
 
+/* Buttons */
 .btn {
   display: flex;
   padding: 0.7vw 2vw;
@@ -964,6 +975,7 @@ main {
   box-shadow: 0 0.5vw 1.5vw rgba(78, 195, 211, 0.4);
 }
 
+/* Stats Cards */
 .hero-stats {
   display: flex;
   justify-content: center;
@@ -1033,6 +1045,7 @@ main {
   background: #2BB4C6;
 }
 
+/* Scroll Indicator */
 .scroll-indicator {
   position: absolute;
   bottom: 0;
@@ -1055,13 +1068,7 @@ main {
     var(--Dark-Base) 70%); /* Fully opaque by 70% of the height */
 }
 
-/* Hide on touch devices that don't support hover */
-@media (hover: none) {
-  .scroll-indicator {
-    display: none;
-  }
-}
-
+/* Scroll Indicator */
 .scroll-indicator:hover {
   opacity: 1;
 }
@@ -1113,6 +1120,43 @@ main {
   background: var(--Blue);
   box-shadow: 0 0 0.6vw rgba(78, 195, 211, 0.8);
 }
+
+/* ========================================
+   HERO SECTION - RESPONSIVE VARIATIONS
+   ======================================== */
+
+/* Hide scroll indicator on touch devices */
+@media (hover: none) {
+  .scroll-indicator {
+    display: none;
+  }
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  .drone-feed-container {
+    position: relative;
+    top: auto;
+    right: auto;
+    width: 90vw;
+    max-width: 400px;
+    margin: 2rem auto;
+  }
+  
+  /* Show scroll indicators on mobile */
+  .scroll-indicator {
+    display: flex;
+  }
+}
+
+/* 16:9 Aspect Ratio Optimizations */
+@media (min-aspect-ratio: 16/9) and (max-height: 700px) {
+  /* Styles for constrained 16:9 displays will go here */
+}
+
+/* ========================================
+   END OF HERO SECTION STYLES
+   ======================================== */
 
 /* Comparison Section Styles */
 .comparison-section {
