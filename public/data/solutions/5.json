@@ -2,6 +2,8 @@
   "id": 5,
   "title": "Digital Chain of Custody",
   "subtitle": "Immutable Audit Trail for Complete Accountability",
+  "teaser": "Immutable audit logs record every step from fluid origin to disposal, tracking who handled it, when, where, and how.",
+  "image": "/oversiteai.io-web/images/digital_custody_chain.png",
   "images": [
     "/oversiteai.io-web/images/digital_custody_chain.png",
     "/oversiteai.io-web/images/audit_trail.jpg"

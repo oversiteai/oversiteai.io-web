@@ -1612,6 +1612,7 @@ main {
   position: relative;
   overflow: hidden;
   margin-bottom: 2.917vw;
+  padding: 0.5vw 0; /* Add vertical padding for borders and shadows */
   touch-action: pan-y; /* Allow vertical scroll but capture horizontal swipes */
 }
 
@@ -1623,7 +1624,7 @@ main {
 .solutions-page {
   min-width: 100%;
   flex-shrink: 0;
-  padding: 0 1vw; /* Add horizontal padding to prevent edge cutoff */
+  padding: 0.2vw 1vw; /* Add padding to prevent border cutoff */
   box-sizing: border-box;
 }
 
@@ -1636,7 +1637,7 @@ main {
 
 .solution-card {
   border-radius: 0.664vw;
-  border: 1px solid var(--Border);
+  border: 1px solid rgba(43, 180, 198, 0.3);
   background: var(--Dark-Secondary);
   overflow: hidden;
   width: 100%; /* Take full width of grid cell */
@@ -1648,7 +1649,7 @@ main {
 
 .solution-card:hover {
   box-shadow: 0 0.5vw 1.5vw rgba(78, 195, 211, 0.4);
-  border-color: rgba(78, 195, 211, 0.5);
+  border-color: rgba(78, 195, 211, 0.9);
 }
 
 /* Placeholder for empty grid cells */

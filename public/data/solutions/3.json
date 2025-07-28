@@ -2,6 +2,8 @@
   "id": 3,
   "title": "Real-Time Well Verification",
   "subtitle": "Instant Compliance Validation for Injection Operations",
+  "teaser": "Cross-reference injection sites against permitted wells database for instant verification before fluid disposal.",
+  "image": "/oversiteai.io-web/images/realtime.png",
   "images": [
     "/oversiteai.io-web/images/realtime.png",
     "/oversiteai.io-web/images/well_verification.jpg"

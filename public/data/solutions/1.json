@@ -2,6 +2,8 @@
   "id": 1,
   "title": "Geofencing and GPS Precision",
   "subtitle": "Advanced Location Tracking for Energy Operations",
+  "teaser": "Every driver route, site visit, and fluid transfer is geotagged and timestamped using high-accuracy GPS.",
+  "image": "/oversiteai.io-web/images/geofence.png",
   "images": [
     "/oversiteai.io-web/images/geofence.png",
     "/oversiteai.io-web/images/gps_tracking.jpg"

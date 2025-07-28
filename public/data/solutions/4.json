@@ -2,6 +2,8 @@
   "id": 4,
   "title": "Automated UIC Generation",
   "subtitle": "Streamlined Regulatory Documentation",
+  "teaser": "Generate UIC documentation automatically by combining flow data, GPS tracks, operator ID, and digital signatures.",
+  "image": "/oversiteai.io-web/images/automated_uic.png",
   "images": [
     "/oversiteai.io-web/images/automated_uic.png",
     "/oversiteai.io-web/images/documentation.jpg"

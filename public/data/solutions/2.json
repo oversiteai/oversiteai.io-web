@@ -2,6 +2,8 @@
   "id": 2,
   "title": "Bluetooth Flow Meter Automation",
   "subtitle": "Wireless Data Capture for Fluid Management",
+  "teaser": "Integrate directly with Bluetooth-enabled flow meters for accurate volume readings at pickup and disposal points.",
+  "image": "/oversiteai.io-web/images/bluetooth.png",
   "images": [
     "/oversiteai.io-web/images/bluetooth.png",
     "/oversiteai.io-web/images/flow_meter.jpg"
