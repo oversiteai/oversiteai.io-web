@@ -86,24 +86,6 @@ const Footer = () => {
           </div>
         </div>
         
-        <div className="footer-partners">
-          <h4 className="partners-title">Trusted Partners</h4>
-          <div className="partners-list">
-            <div className="partner">
-              <div className="partner-icon green">S</div>
-              <span>SensorOps</span>
-            </div>
-            <div className="partner">
-              <div className="partner-icon blue">I</div>
-              <span>IntegratedSecure</span>
-            </div>
-            <div className="partner">
-              <div className="partner-icon red">Q</div>
-              <span>QuantumGuard</span>
-            </div>
-          </div>
-        </div>
-        
         <div className="footer-bottom">
           <div className="copyright">
             © 2025 OverSiteAI. All rights reserved.
