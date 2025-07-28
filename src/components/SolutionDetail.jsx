@@ -9,6 +9,7 @@ function SolutionDetail() {
   const [solution, setSolution] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [validImages, setValidImages] = useState([]);
 
   useEffect(() => {
     // Scroll to top when component mounts
@@ -23,6 +24,21 @@ function SolutionDetail() {
         }
         const data = await response.json();
         setSolution(data);
+        
+        // Check which images are valid
+        if (data.images && data.images.length > 0) {
+          const imageChecks = await Promise.all(
+            data.images.map(async (imgSrc) => {
+              try {
+                const imgResponse = await fetch(imgSrc, { method: 'HEAD' });
+                return imgResponse.ok ? imgSrc : null;
+              } catch {
+                return null;
+              }
+            })
+          );
+          setValidImages(imageChecks.filter(img => img !== null));
+        }
       } catch (err) {
         setError(err.message);
       } finally {
@@ -88,14 +104,18 @@ function SolutionDetail() {
             <p className="solution-detail-subtitle">{solution.subtitle}</p>
           </div>
           
-          {solution.images && solution.images.length > 0 && (
+          {validImages.length > 0 && (
             <div className="solution-detail-images">
-              {solution.images.map((image, index) => (
+              {validImages.map((image, index) => (
                 <img 
                   key={index} 
                   src={image} 
                   alt={`${solution.title} - ${index + 1}`}
                   className="solution-detail-image"
+                  onError={(e) => {
+                    // Hide image if it fails to load after initial check
+                    e.target.style.display = 'none';
+                  }}
                 />
               ))}
             </div>

@@ -6,7 +6,7 @@
   "image": "/oversiteai.io-web/images/geofence.png",
   "images": [
     "/oversiteai.io-web/images/geofence.png",
-    "/oversiteai.io-web/images/gps_tracking.jpg"
+    "/oversiteai.io-web/images/bluetooth.png"
   ],
   "body": "<h2>Revolutionizing Field Inventory Control</h2><p>OverSiteAI's Smart Inventory Management system brings unprecedented visibility and control to your field operations inventory. Track every piece of equipment, every barrel of fluid, and every consumable item in real-time.</p><h3>Key Features</h3><ul><li><strong>RFID & Barcode Integration</strong> - Automatic tracking of tagged equipment and materials</li><li><strong>Predictive Restocking</strong> - AI-powered forecasting prevents stockouts before they happen</li><li><strong>Multi-Site Visibility</strong> - View inventory levels across all locations from a single dashboard</li><li><strong>Automated Reordering</strong> - Set thresholds and let the system handle procurement</li></ul><h3>Benefits</h3><p>Reduce carrying costs by up to 30% while ensuring critical supplies are always available. Our clients report significant reductions in emergency orders and expedited shipping costs.</p><h3>Integration Capabilities</h3><p>Seamlessly connects with existing ERP systems, procurement platforms, and accounting software for a unified operational view.</p>",
   "tags": ["Inventory", "RFID", "Asset Tracking", "Supply Chain"]
