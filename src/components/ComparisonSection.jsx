@@ -87,6 +87,10 @@ const ComparisonSection = () => {
 
   return (
     <section className="comparison-section">
+      <div className="comparison-decorations">
+        <img src="images/torus.svg" alt="" className="decoration-torus" />
+        <img src="images/sphere.svg" alt="" className="decoration-sphere" />
+      </div>
       <div className="container">
         <div className="section-header">
           <div className="section-badge">SYSTEM COMPARISON</div>

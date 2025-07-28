@@ -157,6 +157,14 @@ main {
   margin: 0 auto;
 }
 
+/* Solutions section wider container */
+.solutions-section .container {
+  width: 95vw;
+  max-width: 100vw;
+  position: relative;
+  z-index: 1;
+}
+
 /* Header Styles */
 .header {
   position: fixed;
@@ -1108,11 +1116,50 @@ main {
 
 /* Comparison Section Styles */
 .comparison-section {
+  position: relative;
   padding: 4.375vw 0;
   background: linear-gradient(181deg, 
     var(--Dark-Base) 5.82%, 
     var(--Dark-BG) 85%,        /* End Dark-BG earlier */
     var(--Dark-Secondary) 100%); /* Transition to solutions starting color */
+  overflow: hidden;
+}
+
+/* Comparison Section Decorations */
+.comparison-decorations {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.comparison-section .container {
+  position: relative;
+  z-index: 1;
+}
+
+.decoration-torus {
+  position: absolute;
+  left: -10vw;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32.5vw;
+  height: auto;
+  opacity: 0.15;
+  mix-blend-mode: overlay;
+}
+
+.decoration-sphere {
+  position: absolute;
+  right: -5vw;
+  top: 10vw;
+  width: 32.5vw;
+  height: auto;
+  opacity: 0.15;
+  mix-blend-mode: overlay;
 }
 
 /* SVG Icon Color Classes */
@@ -1242,7 +1289,7 @@ main {
   border: 1px solid rgba(255, 61, 102, 0.20);
   min-height: 10vw;
   align-items: flex-start;
-  background: var(--Dark-BG);
+  background: rgba(19, 22, 25, 0.5); /* Dark-BG with opacity */
 }
 
 .oversite {
@@ -1328,13 +1375,44 @@ main {
 
 /* Solutions Section Styles */
 .solutions-section {
+  position: relative;
   padding: 4.375vw 0;
   background: linear-gradient(180deg, var(--Dark-Secondary) 4.99%, rgba(19, 22, 25, 0.00) 51.17%, #0C0E11 97.35%), linear-gradient(180deg, var(--Dark-Secondary) 0%, var(--Dark-BG) 100%);
+  overflow: hidden;
+}
+
+/* Solutions Section Animated Grid */
+.solutions-grid-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  animation: maskStrobe 20s linear infinite;
+  opacity: 0.3; /* Slightly more visible than hero */
+}
+
+.solutions-grid-overlay::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background-image:
+    linear-gradient(to right, rgba(255,255,255,0.1) 2px, transparent .2vw),
+    linear-gradient(to bottom, rgba(255,255,255,0.1) 2px, transparent .2vw);
+  background-size: 2.5vw 2.5vw;
+  transform-origin: center center;
+  animation: gridScale 20s linear infinite;
+  pointer-events: none;
 }
 
 .solutions-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(5, 1fr); /* 5 columns on same line */
   gap: 1.094vw;
   align-items: stretch;
   margin-bottom: 2.917vw;
@@ -1348,6 +1426,8 @@ main {
   min-width: 0; /* Prevent grid blowout */
   transition: box-shadow 0.3s ease, border-color 0.3s ease;
   cursor: pointer;
+  display: flex;
+  flex-direction: column;
 }
 
 .solution-card:hover {
@@ -1357,7 +1437,7 @@ main {
 
 .card-image {
   position: relative;
-  height: 8.75vw;
+  height: 7.5vw; /* Slightly shorter than original 8.75vw */
   background-size: cover;
   background-position: center;
 }
@@ -1389,6 +1469,9 @@ main {
 .solution-card .card-content {
   padding: 1.458vw;
   background: transparent; /* Override the general .card-content background */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .solution-card .card-title {
@@ -1407,6 +1490,7 @@ main {
   font-weight: 400;
   line-height: 1.4;
   margin-bottom: 0.552vw;
+  flex: 1;
 }
 
 .learn-more {
@@ -1418,6 +1502,7 @@ main {
   font-size: var(--fs-body);
   font-weight: 400;
   cursor: pointer;
+  margin-top: auto;
 }
 
 .learn-more svg {

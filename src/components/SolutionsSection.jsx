@@ -31,6 +31,7 @@ const SolutionsSection = () => {
 
   return (
     <section className="solutions-section">
+      <div className="solutions-grid-overlay"></div>
       <div className="container">
         <div className="section-header">
           <div className="section-badge">Built to Solve Real Field Problems</div>
