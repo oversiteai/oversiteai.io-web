@@ -13,7 +13,7 @@ dist-ssr
 *.local
 
 debug-images/*
-debug/*
+#debug/*
 
 # Editor directories and files
 .vscode/*
