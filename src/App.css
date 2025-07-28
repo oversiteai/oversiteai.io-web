@@ -1182,6 +1182,33 @@ main {
     transform-origin: center center;
   }
   
+  /* Override drone feed text sizes on mobile to compensate for scale */
+  .drone-feed-card .card-title {
+    font-size: 0.3vw; /* Reduced from 0.6vw to account for 2.5x scale */
+  }
+  
+  .drone-feed-card .timestamp {
+    font-size: 0.25vw; /* Reduced from 0.5vw */
+  }
+  
+  .drone-feed-card .feed-label {
+    font-size: 0.3vw; /* Reduced from 0.6vw */
+  }
+  
+  .drone-feed-card .rec-indicator span,
+  .drone-feed-card .info-item {
+    font-size: 0.25vw; /* Reduced from 0.5vw */
+  }
+  
+  .drone-feed-card .footer-item span {
+    font-size: 0.3vw; /* Reduced from 0.6vw */
+  }
+  
+  .drone-feed-card .resolution,
+  .drone-feed-card .fps {
+    font-size: 0.25vw; /* Reduced to match other small text */
+  }
+  
   /* Show scroll indicators on mobile */
   .scroll-indicator {
     display: flex;

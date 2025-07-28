@@ -10,9 +10,8 @@ const SolutionsSection = () => {
   const [touchEnd, setTouchEnd] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   
-  // Use 1 solution per page on mobile, 5 on desktop
-  const isMobile = window.innerWidth <= 768;
-  const SOLUTIONS_PER_PAGE = isMobile ? 1 : 5;
+  // Use 5 solutions per page on both mobile and desktop
+  const SOLUTIONS_PER_PAGE = 5;
   const minSwipeDistance = 50;
 
   // Fallback data for the first 8 solutions
