@@ -1267,7 +1267,7 @@ main {
 .column-header h3 {
   color: var(--Red);
   font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
-  font-size: 1.042vw;
+  font-size: 1.25vw;
   font-weight: 700;
   line-height: 1.4;
 }
@@ -1355,14 +1355,49 @@ main {
   height: 6.667vw;
   display: flex;
   align-items: center;
-  justify-content: center;
   padding: 2.083vw 0;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
 }
 
 .logos-scroll {
   display: flex;
-  gap: 4.167vw;
   align-items: center;
+  gap: 4.167vw;
+  animation: scrollLogos 40s linear infinite;
+  white-space: nowrap;
+}
+
+.logos-scroll .partner-logo {
+  flex-shrink: 0;
+}
+
+@keyframes scrollLogos {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    /* Move by exactly the width of 8 logos + 8 gaps */
+    transform: translateX(calc(-8 * 10vw - 8 * 4.167vw));
+  }
+}
+
+.partner-logo {
+  height: 2.5vw;
+  width: 10vw;
+  object-fit: contain;
+  opacity: 0.7;
+  filter: grayscale(100%);
+  transition: all 0.3s ease;
+}
+
+.partner-logo:hover {
+  opacity: 1;
+  filter: grayscale(0%);
+  transform: scale(1.1);
 }
 
 .logo-item {
@@ -1391,7 +1426,7 @@ main {
   z-index: 0;
   pointer-events: none;
   animation: maskStrobe 20s linear infinite;
-  opacity: 0.3; /* Slightly more visible than hero */
+  opacity: 0.9; /* Slightly more visible than hero */
 }
 
 .solutions-grid-overlay::before {

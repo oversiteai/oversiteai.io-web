@@ -167,10 +167,31 @@ const ComparisonSection = () => {
           <div className="working-text">Working Together Smarter</div>
           <div className="logo-banner">
             <div className="logos-scroll">
-              {/* Company logos would go here */}
-              <div className="logo-item">SensorOps</div>
-              <div className="logo-item">IntegratedSecure</div>
-              <div className="logo-item">QuantumGuard</div>
+              {/* First set of logos */}
+              <img src="images/partners/activecampaign.svg" alt="ActiveCampaign" className="partner-logo" />
+              <img src="images/partners/attentive.svg" alt="Attentive" className="partner-logo" />
+              <img src="images/partners/gumroad.svg" alt="Gumroad" className="partner-logo" />
+              <img src="images/partners/lattice.svg" alt="Lattice" className="partner-logo" />
+              <img src="images/partners/paypal.svg" alt="PayPal" className="partner-logo" />
+              <img src="images/partners/spotify.svg" alt="Spotify" className="partner-logo" />
+              <img src="images/partners/squarespace.svg" alt="Squarespace" className="partner-logo" />
+              <img src="images/partners/zapier.svg" alt="Zapier" className="partner-logo" />
+              
+              {/* Duplicate set for seamless loop */}
+              <img src="images/partners/activecampaign.svg" alt="ActiveCampaign" className="partner-logo" />
+              <img src="images/partners/attentive.svg" alt="Attentive" className="partner-logo" />
+              <img src="images/partners/gumroad.svg" alt="Gumroad" className="partner-logo" />
+              <img src="images/partners/lattice.svg" alt="Lattice" className="partner-logo" />
+              <img src="images/partners/paypal.svg" alt="PayPal" className="partner-logo" />
+              <img src="images/partners/spotify.svg" alt="Spotify" className="partner-logo" />
+              <img src="images/partners/squarespace.svg" alt="Squarespace" className="partner-logo" />
+              <img src="images/partners/zapier.svg" alt="Zapier" className="partner-logo" />
+              
+              {/* Third set to ensure no gaps */}
+              <img src="images/partners/activecampaign.svg" alt="ActiveCampaign" className="partner-logo" />
+              <img src="images/partners/attentive.svg" alt="Attentive" className="partner-logo" />
+              <img src="images/partners/gumroad.svg" alt="Gumroad" className="partner-logo" />
+              <img src="images/partners/lattice.svg" alt="Lattice" className="partner-logo" />
             </div>
           </div>
         </div>
