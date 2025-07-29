@@ -23,6 +23,7 @@
     "express": "^5.1.0",
     "express-fileupload": "^1.5.2",
     "multer": "^2.0.2",
+    "notistack": "^3.0.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.7.1",

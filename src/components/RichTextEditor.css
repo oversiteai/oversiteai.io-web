@@ -1,0 +1,147 @@
+.rich-text-editor {
+  border: 1px solid var(--Border);
+  border-radius: 0.3vw;
+  overflow: hidden;
+  background: var(--Dark-Base);
+}
+
+.editor-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.3vw;
+  padding: 0.5vw;
+  background: var(--Dark-Secondary);
+  border-bottom: 1px solid var(--Border);
+  flex-wrap: wrap;
+}
+
+.toolbar-btn {
+  padding: 0.4vw 0.6vw;
+  background: var(--Dark-Base);
+  border: 1px solid var(--Border);
+  color: var(--Text);
+  border-radius: 0.2vw;
+  cursor: pointer;
+  font-size: 0.8vw;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  min-width: 2vw;
+}
+
+.toolbar-btn:hover {
+  background: rgba(43, 180, 198, 0.1);
+  border-color: rgba(43, 180, 198, 0.3);
+  color: var(--White);
+}
+
+.toolbar-btn:active {
+  background: rgba(43, 180, 198, 0.2);
+}
+
+.toolbar-separator {
+  width: 1px;
+  height: 1.5vw;
+  background: var(--Border);
+  margin: 0 0.3vw;
+}
+
+.editor-content {
+  min-height: 20vw;
+  padding: 1vw;
+  color: var(--Text);
+  font-size: 0.9vw;
+  line-height: 1.6;
+  outline: none;
+}
+
+.editor-content:focus {
+  background: rgba(43, 180, 198, 0.02);
+}
+
+/* Editor content styles */
+.editor-content h2 {
+  color: var(--White);
+  font-size: 1.5vw;
+  margin: 1vw 0 0.5vw 0;
+  font-weight: 600;
+}
+
+.editor-content h3 {
+  color: var(--White);
+  font-size: 1.2vw;
+  margin: 0.8vw 0 0.4vw 0;
+  font-weight: 500;
+}
+
+.editor-content p {
+  margin: 0.5vw 0;
+}
+
+.editor-content ul,
+.editor-content ol {
+  margin: 0.5vw 0;
+  padding-left: 2vw;
+}
+
+.editor-content li {
+  margin: 0.3vw 0;
+}
+
+.editor-content a {
+  color: var(--Blue);
+  text-decoration: underline;
+}
+
+.editor-content img {
+  max-width: 100%;
+  height: auto;
+  margin: 1vw 0;
+  border-radius: 0.3vw;
+}
+
+/* Link dialog */
+.link-dialog {
+  position: absolute;
+  top: 3vw;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--Dark-Secondary);
+  border: 1px solid var(--Border);
+  border-radius: 0.3vw;
+  padding: 1vw;
+  display: flex;
+  gap: 0.5vw;
+  box-shadow: 0 0.5vw 1vw rgba(0, 0, 0, 0.5);
+  z-index: 10;
+}
+
+.link-dialog input {
+  padding: 0.5vw;
+  background: var(--Dark-Base);
+  border: 1px solid var(--Border);
+  color: var(--Text);
+  border-radius: 0.2vw;
+  font-size: 0.8vw;
+  min-width: 15vw;
+}
+
+.link-dialog button {
+  padding: 0.5vw 1vw;
+  background: var(--Blue);
+  border: none;
+  color: var(--Dark-Base);
+  border-radius: 0.2vw;
+  cursor: pointer;
+  font-size: 0.8vw;
+  font-weight: 500;
+}
+
+.link-dialog button:last-child {
+  background: transparent;
+  border: 1px solid var(--Border);
+  color: var(--Text);
+}
+
+.link-dialog button:hover {
+  opacity: 0.8;
+}
