@@ -50,7 +50,11 @@ import {
   Upload as UploadIcon,
   Image as ImageIcon,
   BrokenImage as BrokenImageIcon,
-  Description as DescriptionIcon
+  Description as DescriptionIcon,
+  Publish as PublishIcon,
+  Sync as SyncIcon,
+  CloudUpload as CloudUploadIcon,
+  CloudDownload as CloudDownloadIcon
 } from '@mui/icons-material';
 import { SnackbarProvider as ToastProvider, useSnackbar as useToast } from 'notistack';
 import RichTextEditor from './RichTextEditor';
@@ -74,6 +78,10 @@ function AdminPanelContent() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [bulkDeleteDialogOpen, setBulkDeleteDialogOpen] = useState(false);
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
+  const [gitStatus, setGitStatus] = useState(null);
+  const [gitLoading, setGitLoading] = useState(false);
+  const [publishDialogOpen, setPublishDialogOpen] = useState(false);
+  const [commitMessage, setCommitMessage] = useState('');
   const editorRef = useRef(null);
   const imageUploadRef = useRef(null);
 
@@ -93,6 +101,13 @@ function AdminPanelContent() {
     loadArticles();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [articleType]);
+
+  // Check git status periodically
+  useEffect(() => {
+    checkGitStatus();
+    const interval = setInterval(checkGitStatus, 30000); // Check every 30 seconds
+    return () => clearInterval(interval);
+  }, []);
 
   // Use notistack for toast notifications
   const showToast = (message, severity = 'success') => {
@@ -493,6 +508,76 @@ function AdminPanelContent() {
     }
   };
 
+  // Git status checking
+  const checkGitStatus = async () => {
+    try {
+      const response = await fetch('http://localhost:3001/api/git/status');
+      if (response.ok) {
+        const status = await response.json();
+        setGitStatus(status);
+      }
+    } catch (error) {
+      // Silently fail if API is not running
+      console.error('Git status check failed:', error);
+    }
+  };
+
+  // Git pull
+  const handleGitPull = async () => {
+    setGitLoading(true);
+    try {
+      const response = await fetch('http://localhost:3001/api/git/pull', {
+        method: 'POST'
+      });
+      
+      if (response.ok) {
+        showToast('Successfully pulled latest changes', 'success');
+        await checkGitStatus();
+        await loadArticles(); // Reload articles after pull
+      } else {
+        showToast('Failed to pull changes', 'error');
+      }
+    } catch (error) {
+      showToast('Error: API server not running', 'error');
+    } finally {
+      setGitLoading(false);
+    }
+  };
+
+  // Git push
+  const handleGitPush = async () => {
+    setGitLoading(true);
+    try {
+      const response = await fetch('http://localhost:3001/api/git/push', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          message: commitMessage || 'Update content via admin panel' 
+        })
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        showToast('Successfully published changes', 'success');
+        setPublishDialogOpen(false);
+        setCommitMessage('');
+        await checkGitStatus();
+      } else if (result.noChanges) {
+        showToast('No changes to publish', 'info');
+        setPublishDialogOpen(false);
+      } else {
+        showToast('Failed to publish changes', 'error');
+      }
+    } catch (error) {
+      showToast('Error: API server not running', 'error');
+    } finally {
+      setGitLoading(false);
+    }
+  };
+
   if (loading) {
     return (
       <ThemeProvider theme={adminTheme}>
@@ -515,17 +600,64 @@ function AdminPanelContent() {
         <Container maxWidth="xl" sx={{ py: 4, position: 'relative' }}>
       <Paper elevation={3} sx={{ p: 3, mb: 3 }}>
         <Box display="flex" justifyContent="space-between" alignItems="center">
-          <Typography variant="h4" component="h1">
-            Content Editor
-          </Typography>
-          <Button
-            variant="outlined"
-            startIcon={<ArrowBackIcon />}
-            onClick={() => navigate('/')}
-            sx={{ borderColor: 'var(--Blue)', color: 'var(--Blue)' }}
-          >
-            Back to Site
-          </Button>
+          <Box display="flex" alignItems="center" gap={2}>
+            <Typography variant="h4" component="h1">
+              Content Editor
+            </Typography>
+            {gitStatus && (
+              <Box display="flex" gap={1}>
+                {gitStatus.behindRemote && (
+                  <Chip
+                    icon={<CloudDownloadIcon />}
+                    label={`${gitStatus.behindCount} behind`}
+                    color="warning"
+                    size="small"
+                    onClick={handleGitPull}
+                    disabled={gitLoading}
+                  />
+                )}
+                {gitStatus.hasLocalChanges && (
+                  <Chip
+                    icon={<CloudUploadIcon />}
+                    label={`${gitStatus.changedFiles.length} changes`}
+                    color="info"
+                    size="small"
+                    onClick={() => setPublishDialogOpen(true)}
+                    disabled={gitLoading}
+                  />
+                )}
+                {!gitStatus.hasLocalChanges && !gitStatus.behindRemote && (
+                  <Chip
+                    icon={<SyncIcon />}
+                    label="Up to date"
+                    color="success"
+                    size="small"
+                  />
+                )}
+              </Box>
+            )}
+          </Box>
+          <Box display="flex" gap={2}>
+            {gitStatus?.hasLocalChanges && (
+              <Button
+                variant="contained"
+                startIcon={<PublishIcon />}
+                onClick={() => setPublishDialogOpen(true)}
+                disabled={gitLoading}
+                color="primary"
+              >
+                Publish Changes
+              </Button>
+            )}
+            <Button
+              variant="outlined"
+              startIcon={<ArrowBackIcon />}
+              onClick={() => navigate('/')}
+              sx={{ borderColor: 'var(--Blue)', color: 'var(--Blue)' }}
+            >
+              Back to Site
+            </Button>
+          </Box>
         </Box>
       </Paper>
 
@@ -1017,6 +1149,53 @@ function AdminPanelContent() {
           <Button onClick={() => setCancelDialogOpen(false)}>Continue Editing</Button>
           <Button onClick={performCancel} color="error">
             Discard Changes
+          </Button>
+        </DialogActions>
+      </Dialog>
+      
+      {/* Publish dialog */}
+      <Dialog
+        open={publishDialogOpen}
+        onClose={() => setPublishDialogOpen(false)}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>Publish Changes</DialogTitle>
+        <DialogContent>
+          <DialogContentText sx={{ mb: 2 }}>
+            The following files will be published:
+          </DialogContentText>
+          {gitStatus?.changedFiles && (
+            <Paper variant="outlined" sx={{ p: 2, mb: 2, maxHeight: 200, overflowY: 'auto' }}>
+              {gitStatus.changedFiles.map((file, index) => (
+                <Typography key={index} variant="body2" sx={{ fontFamily: 'monospace' }}>
+                  {file.status} {file.path}
+                </Typography>
+              ))}
+            </Paper>
+          )}
+          <TextField
+            fullWidth
+            label="Commit Message"
+            value={commitMessage}
+            onChange={(e) => setCommitMessage(e.target.value)}
+            placeholder="Update content via admin panel"
+            multiline
+            rows={2}
+            variant="outlined"
+            sx={{ mt: 2 }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setPublishDialogOpen(false)}>Cancel</Button>
+          <Button 
+            onClick={handleGitPush} 
+            color="primary" 
+            variant="contained"
+            disabled={gitLoading}
+            startIcon={gitLoading ? <CircularProgress size={20} /> : <PublishIcon />}
+          >
+            {gitLoading ? 'Publishing...' : 'Publish'}
           </Button>
         </DialogActions>
       </Dialog>

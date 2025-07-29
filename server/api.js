@@ -3,9 +3,13 @@ import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import multer from 'multer';
+import { exec } from 'child_process';
+import { promisify } from 'util';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+const execAsync = promisify(exec);
 
 const app = express();
 app.use(express.json());
@@ -209,6 +213,102 @@ app.delete('/api/solutions/:id', async (req, res) => {
     
     res.json({ success: true, message: 'Solution deleted successfully' });
   } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Git status endpoint - checks for changes in public/data directory
+app.get('/api/git/status', async (req, res) => {
+  try {
+    const projectRoot = path.join(__dirname, '..');
+    
+    // Check for uncommitted changes in public/data
+    const { stdout: statusOutput } = await execAsync('git status --porcelain public/data', { cwd: projectRoot });
+    const hasLocalChanges = statusOutput.trim().length > 0;
+    
+    // Check if we're behind the remote
+    await execAsync('git fetch', { cwd: projectRoot });
+    const { stdout: behindOutput } = await execAsync('git rev-list HEAD..origin/main --count', { cwd: projectRoot });
+    const behindCount = parseInt(behindOutput.trim()) || 0;
+    
+    // Check if we're ahead of the remote
+    const { stdout: aheadOutput } = await execAsync('git rev-list origin/main..HEAD --count', { cwd: projectRoot });
+    const aheadCount = parseInt(aheadOutput.trim()) || 0;
+    
+    // Get list of changed files
+    const changedFiles = statusOutput.trim().split('\n').filter(line => line).map(line => {
+      const [status, ...pathParts] = line.trim().split(' ');
+      return {
+        status: status,
+        path: pathParts.join(' ')
+      };
+    });
+    
+    res.json({
+      hasLocalChanges,
+      behindRemote: behindCount > 0,
+      aheadRemote: aheadCount > 0,
+      behindCount,
+      aheadCount,
+      changedFiles
+    });
+  } catch (error) {
+    console.error('Git status error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Git pull endpoint
+app.post('/api/git/pull', async (req, res) => {
+  try {
+    const projectRoot = path.join(__dirname, '..');
+    const { stdout, stderr } = await execAsync('git pull origin main', { cwd: projectRoot });
+    
+    res.json({
+      success: true,
+      message: 'Successfully pulled latest changes',
+      output: stdout,
+      stderr
+    });
+  } catch (error) {
+    console.error('Git pull error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Git push endpoint - commits and pushes changes in public/data
+app.post('/api/git/push', async (req, res) => {
+  try {
+    const projectRoot = path.join(__dirname, '..');
+    const { message = 'Update content via admin panel' } = req.body;
+    
+    // Add all changes in public/data
+    await execAsync('git add public/data', { cwd: projectRoot });
+    
+    // Commit with message
+    const commitMessage = `${message}`;
+    await execAsync(`git commit -m "${commitMessage}"`, { cwd: projectRoot });
+    
+    // Push to remote
+    const { stdout } = await execAsync('git push origin main', { cwd: projectRoot });
+    
+    res.json({
+      success: true,
+      message: 'Successfully committed and pushed changes',
+      output: stdout
+    });
+  } catch (error) {
+    console.error('Git push error:', error);
+    
+    // Check if error is because there are no changes to commit
+    if (error.message.includes('nothing to commit')) {
+      return res.json({
+        success: false,
+        message: 'No changes to commit',
+        noChanges: true
+      });
+    }
+    
     res.status(500).json({ error: error.message });
   }
 });
