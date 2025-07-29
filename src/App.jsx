@@ -50,9 +50,12 @@ function AppContent() {
           <Routes location={displayLocation}>
             <Route path="/" element={<HomePage />} />
             <Route path="/solution/detail/:id" element={<SolutionDetail />} />
-            {/* Admin route - only in development */}
+            {/* Admin routes - only in development */}
             {process.env.NODE_ENV === 'development' && (
-              <Route path="/admin" element={<AdminPanel />} />
+              <>
+                <Route path="/admin" element={<AdminPanel />} />
+                <Route path="/admin/:contentType/:id" element={<AdminPanel />} />
+              </>
             )}
           </Routes>
         </div>

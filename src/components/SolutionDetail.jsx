@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Container, Typography, Button, Box, CircularProgress } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import EditIcon from '@mui/icons-material/Edit';
 import './SolutionDetail.css';
 
 function SolutionDetail() {
@@ -11,6 +12,7 @@ function SolutionDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [primaryImageValid, setPrimaryImageValid] = useState(false);
+  const isDevMode = process.env.NODE_ENV === 'development';
 
   useEffect(() => {
     // Scroll to top when component mounts
@@ -92,6 +94,15 @@ function SolutionDetail() {
             </svg>
             <span>Back to Solutions</span>
           </div>
+          {isDevMode && (
+            <div 
+              className="nav-button nav-button-right"
+              onClick={() => navigate(`/admin/solutions/${id}`)}
+            >
+              <EditIcon style={{ fontSize: '1.2vw' }} />
+              <span>Edit</span>
+            </div>
+          )}
         </div>
         
         <div className="solution-detail-card">

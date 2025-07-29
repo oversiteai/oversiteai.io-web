@@ -53,6 +53,15 @@
   font-size: 0.9vw;
   line-height: 1.6;
   outline: none;
+  position: relative;
+}
+
+.editor-content:empty:before {
+  content: attr(data-placeholder);
+  color: rgba(255, 255, 255, 0.4);
+  pointer-events: none;
+  position: absolute;
+  font-style: italic;
 }
 
 .editor-content:focus {

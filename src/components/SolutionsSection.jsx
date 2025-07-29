@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import EditIcon from '@mui/icons-material/Edit';
 
 const SolutionsSection = () => {
+  const navigate = useNavigate();
   const [solutions, setSolutions] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalSolutions, setTotalSolutions] = useState(0);
@@ -9,6 +11,7 @@ const SolutionsSection = () => {
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const isDevMode = process.env.NODE_ENV === 'development';
   
   // Use 5 solutions per page on both mobile and desktop
   const SOLUTIONS_PER_PAGE = 5;
@@ -194,8 +197,8 @@ const SolutionsSection = () => {
                     )
                     .map((solution) => (
                       <Link 
+                        key={solution.id}
                         to={`/solution/detail/${solution.id}`} 
-                        key={solution.id} 
                         className="solution-card" 
                         style={{ textDecoration: 'none', color: 'inherit' }}
                       >
@@ -220,6 +223,20 @@ const SolutionsSection = () => {
                               <path className="icon-external-link" d="M2.9165 7.81006H11.0832" strokeWidth="1.16667"/>
                               <path className="icon-external-link" d="M7 3.72681L11.0833 7.81014L7 11.8935" strokeWidth="1.16667"/>
                             </svg>
+                            {isDevMode && (
+                              <EditIcon
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  navigate(`/admin/solutions/${solution.id}`);
+                                }}
+                                style={{ 
+                                  fontSize: '1.2em', 
+                                  marginLeft: '0.5em',
+                                  cursor: 'pointer'
+                                }}
+                              />
+                            )}
                           </div>
                         </div>
                       </Link>

@@ -18,7 +18,7 @@ import {
 import ImageIcon from '@mui/icons-material/Image';
 import './RichTextEditor.css';
 
-const RichTextEditor = forwardRef(({ value, onChange, onImageInsert, images = [] }, ref) => {
+const RichTextEditor = forwardRef(({ value, onChange, onImageInsert, images = [], placeholder = 'Start writing...' }, ref) => {
   const editorRef = useRef(null);
   const [showLinkDialog, setShowLinkDialog] = useState(false);
   const [linkUrl, setLinkUrl] = useState('');
@@ -228,6 +228,7 @@ const RichTextEditor = forwardRef(({ value, onChange, onImageInsert, images = []
         ref={editorRef}
         className="editor-content"
         contentEditable
+        data-placeholder={placeholder}
         onInput={handleInput}
         onPaste={(e) => {
           e.preventDefault();

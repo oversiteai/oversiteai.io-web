@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import {
@@ -52,13 +52,14 @@ import {
   BrokenImage as BrokenImageIcon,
   Description as DescriptionIcon
 } from '@mui/icons-material';
-import { SnackbarProvider, useSnackbar } from 'notistack';
+import { SnackbarProvider as ToastProvider, useSnackbar as useToast } from 'notistack';
 import RichTextEditor from './RichTextEditor';
 import adminTheme from '../adminTheme';
 
 function AdminPanelContent() {
   const navigate = useNavigate();
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const { contentType: urlContentType, id: urlId } = useParams();
+  const { enqueueSnackbar: enqueueToast, closeSnackbar: closeToast } = useToast();
   
   // Debug: Check if theme is loaded
   console.log('Admin Theme:', adminTheme);
@@ -68,13 +69,24 @@ function AdminPanelContent() {
   const [originalArticle, setOriginalArticle] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [articleType, setArticleType] = useState('solutions');
+  const [articleType, setArticleType] = useState(urlContentType || 'solutions');
   const [selectedArticleIds, setSelectedArticleIds] = useState([]);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [bulkDeleteDialogOpen, setBulkDeleteDialogOpen] = useState(false);
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
   const editorRef = useRef(null);
   const imageUploadRef = useRef(null);
+
+  // If we have URL parameters, select the article after loading
+  useEffect(() => {
+    if (urlId && articles.length > 0) {
+      const article = articles.find(a => a.id === parseInt(urlId));
+      if (article) {
+        selectArticle(article);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [urlId, articles]);
 
   // Load all articles on mount and when article type changes
   useEffect(() => {
@@ -84,7 +96,7 @@ function AdminPanelContent() {
 
   // Use notistack for toast notifications
   const showToast = (message, severity = 'success') => {
-    enqueueSnackbar(message, { 
+    enqueueToast(message, { 
       variant: severity,
       anchorOrigin: {
         vertical: 'top',
@@ -97,7 +109,7 @@ function AdminPanelContent() {
         <Alert 
           severity={severity} 
           variant="standard"
-          onClose={() => closeSnackbar(key)}
+          onClose={() => closeToast(key)}
           sx={{ width: '100%', minWidth: '300px' }}
         >
           {message}
@@ -361,13 +373,13 @@ function AdminPanelContent() {
     
     const newArticle = {
       id: newId,
-      title: `New ${singularTypeName}`,
-      subtitle: 'Enter a subtitle',
-      teaser: 'Enter a short description for the homepage card',
+      title: '',
+      subtitle: '',
+      teaser: '',
       primaryImage: '',
       images: [],
-      body: `<p>Enter your ${singularType} content here...</p>`,
-      tags: ['New', singularTypeName],
+      body: '',
+      tags: [],
       type: articleType // Add article type to the data
     };
     
@@ -566,7 +578,10 @@ function AdminPanelContent() {
                   <Button
                     variant="contained"
                     startIcon={<DescriptionIcon />}
-                    onClick={createNewArticle}
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent Box onClick from firing
+                      createNewArticle();
+                    }}
                     disabled={hasUnsavedChanges()}
                     color="primary"
                   >
@@ -664,6 +679,7 @@ function AdminPanelContent() {
                     value={editedArticle.title}
                     onChange={(e) => handleFieldChange('title', e.target.value)}
                     variant="outlined"
+                    placeholder={`New ${capitalizeArticleType(getSingularType(articleType))}`}
                     sx={{ 
                       '& .MuiInputBase-input': { color: 'var(--Text)' },
                       '& .MuiInputLabel-root': { color: 'var(--White)' }
@@ -676,6 +692,7 @@ function AdminPanelContent() {
                     value={editedArticle.subtitle}
                     onChange={(e) => handleFieldChange('subtitle', e.target.value)}
                     variant="outlined"
+                    placeholder="Enter a subtitle"
                     sx={{ 
                       '& .MuiInputBase-input': { color: 'var(--Text)' },
                       '& .MuiInputLabel-root': { color: 'var(--White)' }
@@ -690,6 +707,7 @@ function AdminPanelContent() {
                     multiline
                     rows={3}
                     variant="outlined"
+                    placeholder="Enter a short description for the homepage card"
                     sx={{ 
                       '& .MuiInputBase-input': { color: 'var(--Text)' },
                       '& .MuiInputLabel-root': { color: 'var(--White)' }
@@ -854,6 +872,7 @@ function AdminPanelContent() {
                       value={editedArticle.body}
                       onChange={(value) => handleFieldChange('body', value)}
                       images={editedArticle.images || []}
+                      placeholder={`Enter your ${getSingularType(articleType)} content here...`}
                     />
                   </Box>
 
@@ -901,7 +920,7 @@ function AdminPanelContent() {
                       <Button
                         variant="outlined"
                         startIcon={<PreviewIcon />}
-                        onClick={() => window.open(`/oversiteai.io-web/${getSingularType(articleType)}/detail/${editedArticle.id}`, '_blank')}
+                        onClick={() => window.open(`/oversiteai.io-web/${getSingularType(articleType)}/detail/${editedArticle.id}`, 'preview_window')}
                         color="primary"
                       >
                         Preview
@@ -1012,7 +1031,7 @@ function AdminPanel() {
   return (
     <ThemeProvider theme={adminTheme}>
       <CssBaseline />
-      <SnackbarProvider 
+      <ToastProvider 
         maxSnack={5}
         anchorOrigin={{
           vertical: 'top',
@@ -1029,7 +1048,7 @@ function AdminPanel() {
           `}
         </style>
         <AdminPanelContent />
-      </SnackbarProvider>
+      </ToastProvider>
     </ThemeProvider>
   );
 }
