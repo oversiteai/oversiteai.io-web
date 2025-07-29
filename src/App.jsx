@@ -12,6 +12,7 @@ import DarkwaterSection from './components/DarkwaterSection';
 import Footer from './components/Footer';
 import ThemeSwitcher from './components/ThemeSwitcher';
 import SolutionDetail from './components/SolutionDetail';
+import AdminPanel from './components/AdminPanel';
 
 function HomePage() {
   return (
@@ -49,6 +50,10 @@ function AppContent() {
           <Routes location={displayLocation}>
             <Route path="/" element={<HomePage />} />
             <Route path="/solution/detail/:id" element={<SolutionDetail />} />
+            {/* Admin route - only in development */}
+            {process.env.NODE_ENV === 'development' && (
+              <Route path="/admin" element={<AdminPanel />} />
+            )}
           </Routes>
         </div>
       </main>

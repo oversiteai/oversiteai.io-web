@@ -1163,13 +1163,6 @@ main {
   .hero-title {
     font-size: var(--fs-body) * 2vw;
   }
-
-      /* :root {
-      --fs-hero: 4.375vw × 2vw;
-      --fs-body-lg: 1.354vw × 2vw;
-      --fs-body: 0.938vw × 2vw;
-      --fs-small: 0.833vw × 2vw; 
-    }; */
   
   
   .drone-feed-container {
