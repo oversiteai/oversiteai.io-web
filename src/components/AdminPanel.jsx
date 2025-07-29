@@ -83,7 +83,7 @@ function AdminPanelContent() {
   }, [articleType]);
 
   // Use notistack for toast notifications
-  const showSnackbar = (message, severity = 'success') => {
+  const showToast = (message, severity = 'success') => {
     enqueueSnackbar(message, { 
       variant: severity,
       anchorOrigin: {
@@ -142,7 +142,7 @@ function AdminPanelContent() {
       } else {
         // For other article types, show empty list for now
         setArticles([]);
-        showSnackbar(`No ${articleType} articles found. Create a new one to get started!`, 'info');
+        showToast(`No ${articleType} articles found. Create a new one to get started!`, 'info');
       }
     }
     setLoading(false);
@@ -151,7 +151,7 @@ function AdminPanelContent() {
   const selectArticle = (article) => {
     // Check for unsaved changes before switching
     if (hasUnsavedChanges()) {
-      showSnackbar('You have unsaved changes. Please save or cancel before switching articles.', 'warning');
+      showToast('You have unsaved changes. Please save or cancel before switching articles.', 'warning');
       return;
     }
     
@@ -170,12 +170,42 @@ function AdminPanelContent() {
   // Removed unused functions handleImageChange and addImage
   // Images are now managed through upload and gallery
 
-  const removeImage = (index) => {
-    const newImages = editedArticle.images.filter((_, i) => i !== index);
-    setEditedArticle(prev => ({
-      ...prev,
-      images: newImages
-    }));
+  const removeImage = async (index) => {
+    const imageToDelete = editedArticle.images[index];
+    
+    try {
+      // Make API call to delete the image from the file system
+      const response = await fetch(`http://localhost:3001/api/${articleType}/${editedArticle.id}/delete-image`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ imageUrl: imageToDelete })
+      });
+
+      if (response.ok) {
+        // Remove from the images array only if deletion was successful
+        const newImages = editedArticle.images.filter((_, i) => i !== index);
+        setEditedArticle(prev => ({
+          ...prev,
+          images: newImages
+        }));
+        
+        // If this was the primary image, clear it
+        if (editedArticle.primaryImage === imageToDelete) {
+          setEditedArticle(prev => ({
+            ...prev,
+            primaryImage: ''
+          }));
+        }
+        
+        showToast('Image deleted successfully', 'success');
+      } else {
+        showToast('Failed to delete image from server', 'error');
+      }
+    } catch {
+      showToast('Error: API server not running. Run "npm run dev:api" to enable image deletion.', 'error');
+    }
   };
 
   const handleTagsChange = (tags) => {
@@ -207,10 +237,10 @@ function AdminPanelContent() {
             images: [...prev.images, data.url]
           }));
         } else {
-          showSnackbar(`Failed to upload ${file.name}`, 'error');
+          showToast(`Failed to upload ${file.name}`, 'error');
         }
       } catch {
-        showSnackbar('Error: API server not running. Run "npm run dev:api" to enable uploads.', 'error');
+        showToast('Error: API server not running. Run "npm run dev:api" to enable uploads.', 'error');
       }
     }
     
@@ -241,7 +271,7 @@ function AdminPanelContent() {
 
       if (response.ok) {
         const singularType = getSingularType(articleType);
-        showSnackbar(`${capitalizeArticleType(singularType)} ${isNew ? 'created' : 'saved'} successfully!`, 'success');
+        showToast(`${capitalizeArticleType(singularType)} ${isNew ? 'created' : 'saved'} successfully!`, 'success');
         setSelectedArticle(editedArticle);
         setOriginalArticle({ ...editedArticle });
         
@@ -254,7 +284,7 @@ function AdminPanelContent() {
       }
     } catch {
       // If API fails, show message about needing the backend
-      showSnackbar('Error: API server not running. Run "npm run dev:api" in another terminal to enable saving.', 'error');
+      showToast('Error: API server not running. Run "npm run dev:api" in another terminal to enable saving.', 'error');
     } finally {
       setSaving(false);
     }
@@ -270,7 +300,7 @@ function AdminPanelContent() {
 
       if (response.ok) {
         const singularType = getSingularType(articleType);
-        showSnackbar(`${capitalizeArticleType(singularType)} deleted successfully!`, 'success');
+        showToast(`${capitalizeArticleType(singularType)} deleted successfully!`, 'success');
         
         // Remove from articles list
         setArticles(prev => prev.filter(a => a.id !== editedArticle.id));
@@ -284,7 +314,7 @@ function AdminPanelContent() {
         throw new Error('Failed to delete');
       }
     } catch {
-      showSnackbar('Error: API server not running. Run "npm run dev:api" in another terminal to enable deletion.', 'error');
+      showToast('Error: API server not running. Run "npm run dev:api" in another terminal to enable deletion.', 'error');
     } finally {
       setSaving(false);
     }
@@ -316,7 +346,7 @@ function AdminPanelContent() {
   const createNewArticle = () => {
     // Check for unsaved changes
     if (hasUnsavedChanges()) {
-      showSnackbar('Please save or cancel your current changes before creating a new article.', 'warning');
+      showToast('Please save or cancel your current changes before creating a new article.', 'warning');
       return;
     }
     
@@ -334,7 +364,7 @@ function AdminPanelContent() {
       title: `New ${singularTypeName}`,
       subtitle: 'Enter a subtitle',
       teaser: 'Enter a short description for the homepage card',
-      image: '/oversiteai.io-web/images/placeholder.png',
+      primaryImage: '',
       images: [],
       body: `<p>Enter your ${singularType} content here...</p>`,
       tags: ['New', singularTypeName],
@@ -349,7 +379,7 @@ function AdminPanelContent() {
     setEditedArticle({ ...newArticle });
     setOriginalArticle(null); // Keep original as null so hasUnsavedChanges returns true
     
-    showSnackbar(`New ${singularType} created. Remember to save your changes!`, 'info');
+    showToast(`New ${singularType} created. Remember to save your changes!`, 'info');
   };
 
   const cancelEdit = () => {
@@ -407,12 +437,12 @@ function AdminPanelContent() {
         
         const singularType = getSingularType(articleType);
         const articleName = deleted === 1 ? singularType : articleType;
-        showSnackbar(`Successfully deleted ${deleted} ${articleName}.`, 'success');
+        showToast(`Successfully deleted ${deleted} ${articleName}.`, 'success');
       } else {
-        showSnackbar('Failed to delete articles. Make sure the API server is running.', 'error');
+        showToast('Failed to delete articles. Make sure the API server is running.', 'error');
       }
     } catch {
-      showSnackbar('Error: API server not running. Run "npm run dev:api" in another terminal.', 'error');
+      showToast('Error: API server not running. Run "npm run dev:api" in another terminal.', 'error');
     } finally {
       setSaving(false);
       setBulkDeleteDialogOpen(false);
@@ -528,7 +558,7 @@ function AdminPanelContent() {
                 <Box
                   onClick={() => {
                     if (hasUnsavedChanges()) {
-                      showSnackbar('Please save or cancel your current changes before creating a new article.', 'warning');
+                      showToast('Please save or cancel your current changes before creating a new article.', 'warning');
                     }
                   }}
                   sx={{ display: 'inline-block' }}
@@ -671,10 +701,10 @@ function AdminPanelContent() {
                       Primary Image (for card)
                     </Typography>
                     <Paper sx={{ p: 2, backgroundColor: 'var(--Dark-Base)' }}>
-                      {editedArticle.image ? (
+                      {editedArticle.primaryImage ? (
                         <Box
                           component="img"
-                          src={editedArticle.image}
+                          src={editedArticle.primaryImage}
                           alt="Primary"
                           sx={{ 
                             width: '240px',
@@ -745,12 +775,12 @@ function AdminPanelContent() {
                               sx={{ 
                                 cursor: 'pointer',
                                 position: 'relative',
-                                border: editedArticle.image === image ? '2px solid var(--Green)' : '1px solid var(--Border)',
+                                border: editedArticle.primaryImage === image ? '2px solid var(--Green)' : '1px solid var(--Border)',
                                 borderRadius: 1,
                                 overflow: 'hidden',
                                 '&:hover .delete-overlay': { opacity: 1 }
                               }}
-                              onClick={() => handleFieldChange('image', image)}
+                              onClick={() => handleFieldChange('primaryImage', image)}
                             >
                               <img
                                 src={image}
@@ -762,7 +792,7 @@ function AdminPanelContent() {
                                   e.target.src = 'data:image/svg+xml,%3Csvg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="200" height="200" fill="%23222"%3E%3C/rect%3E%3Cpath d="M75 65L125 65L140 95L140 125L60 125L60 95L75 65Z" stroke="%23444" stroke-width="3" fill="none"%3E%3C/path%3E%3Cpath d="M90 85C90 90.5228 85.5228 95 80 95C74.4772 95 70 90.5228 70 85C70 79.4772 74.4772 75 80 75C85.5228 75 90 79.4772 90 85Z" fill="%23444"%3E%3C/path%3E%3Cpath d="M60 125L80 100L100 115L120 95L140 125" stroke="%23444" stroke-width="3" fill="none"%3E%3C/path%3E%3Cpath d="M50 50L150 150M150 50L50 150" stroke="%23ff3d66" stroke-width="4"%3E%3C/path%3E%3C/svg%3E';
                                 }}
                               />
-                              {editedArticle.image === image && (
+                              {editedArticle.primaryImage === image && (
                                 <Chip
                                   label="Primary"
                                   size="small"
@@ -823,6 +853,7 @@ function AdminPanelContent() {
                       ref={editorRef}
                       value={editedArticle.body}
                       onChange={(value) => handleFieldChange('body', value)}
+                      images={editedArticle.images || []}
                     />
                   </Box>
 

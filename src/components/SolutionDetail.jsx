@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Container, Typography, Button, Box, CircularProgress } from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import './SolutionDetail.css';
 
 function SolutionDetail() {
@@ -9,7 +10,7 @@ function SolutionDetail() {
   const [solution, setSolution] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [validImages, setValidImages] = useState([]);
+  const [primaryImageValid, setPrimaryImageValid] = useState(false);
 
   useEffect(() => {
     // Scroll to top when component mounts
@@ -25,19 +26,14 @@ function SolutionDetail() {
         const data = await response.json();
         setSolution(data);
         
-        // Check which images are valid
-        if (data.images && data.images.length > 0) {
-          const imageChecks = await Promise.all(
-            data.images.map(async (imgSrc) => {
-              try {
-                const imgResponse = await fetch(imgSrc, { method: 'HEAD' });
-                return imgResponse.ok ? imgSrc : null;
-              } catch {
-                return null;
-              }
-            })
-          );
-          setValidImages(imageChecks.filter(img => img !== null));
+        // Check if primary image is valid
+        if (data.primaryImage) {
+          try {
+            const imgResponse = await fetch(data.primaryImage, { method: 'HEAD' });
+            setPrimaryImageValid(imgResponse.ok);
+          } catch {
+            setPrimaryImageValid(false);
+          }
         }
       } catch (err) {
         setError(err.message);
@@ -104,20 +100,17 @@ function SolutionDetail() {
             <p className="solution-detail-subtitle">{solution.subtitle}</p>
           </div>
           
-          {validImages.length > 0 && (
+          {primaryImageValid && solution.primaryImage && (
             <div className="solution-detail-images">
-              {validImages.map((image, index) => (
-                <img 
-                  key={index} 
-                  src={image} 
-                  alt={`${solution.title} - ${index + 1}`}
-                  className="solution-detail-image"
-                  onError={(e) => {
-                    // Hide image if it fails to load after initial check
-                    e.target.style.display = 'none';
-                  }}
-                />
-              ))}
+              <img 
+                src={solution.primaryImage} 
+                alt={solution.title}
+                className="solution-detail-image"
+                onError={(e) => {
+                  // Hide image if it fails to load after initial check
+                  e.target.style.display = 'none';
+                }}
+              />
             </div>
           )}
           

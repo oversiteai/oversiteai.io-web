@@ -163,6 +163,37 @@ app.get('/api/solutions/:id/images', async (req, res) => {
   }
 });
 
+// Delete a single image from a solution
+app.delete('/api/solutions/:id/delete-image', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { imageUrl } = req.body;
+    
+    if (!imageUrl) {
+      return res.status(400).json({ error: 'No image URL provided' });
+    }
+    
+    // Extract filename from URL
+    const filename = imageUrl.split('/').pop();
+    const imagePath = path.join(__dirname, `../public/data/solutions/${id}/${filename}`);
+    
+    // Delete the file
+    try {
+      await fs.unlink(imagePath);
+      res.json({ success: true, message: 'Image deleted successfully' });
+    } catch (error) {
+      if (error.code === 'ENOENT') {
+        // File doesn't exist, but that's okay
+        res.json({ success: true, message: 'Image already deleted' });
+      } else {
+        throw error;
+      }
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Delete a solution (including its directory)
 app.delete('/api/solutions/:id', async (req, res) => {
   try {

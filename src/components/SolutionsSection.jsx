@@ -83,7 +83,7 @@ const SolutionsSection = () => {
               id: data.id || id,
               title: data.title || fallbackSolutions[id - 1]?.title || `Solution ${id}`,
               description: data.teaser || data.subtitle || fallbackSolutions[id - 1]?.description || '',
-              image: data.image || fallbackSolutions[id - 1]?.image || `/oversiteai.io-web/images/solution${id}.png`
+              image: data.primaryImage || data.image || fallbackSolutions[id - 1]?.image || `/oversiteai.io-web/images/solution${id}.png`
             };
             loadedSolutions.push(solutionData);
             consecutiveFailures = 0;
