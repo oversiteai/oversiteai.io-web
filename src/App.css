@@ -2029,8 +2029,8 @@ main {
   line-height: 1.16; /* 19.91px/17.2px */
 }
 
-/* Darkwater Section Styles */
-.darkwater-section {
+/* Featured Section Styles */
+.featured-section {
   position: relative;
   padding: 4.375vw 0; /* 84px */
   background: linear-gradient(180deg, #03262B 0%, var(--Dark-Base) 100%);
@@ -2059,7 +2059,7 @@ main {
   filter: blur(calc(1.667vw * var(--blur-intensity))); /* 32px */
 }
 
-.darkwater-content {
+.featured-content {
   display: flex;
   justify-content: center;
   gap: 2.188vw; /* 42px */
@@ -2067,7 +2067,7 @@ main {
   flex-wrap: nowrap;
 }
 
-.darkwater-info {
+.featured-info {
   flex: 1;
   max-width: 40vw; /* Increased for better layout */
   min-width: 20vw;
@@ -2094,12 +2094,12 @@ main {
   height: 0.781vw; /* 15px */
 }
 
-.icon-darkwater {
+.icon-featured {
   stroke: #2BB4C6;
   fill: none;
 }
 
-.darkwater-title {
+.featured-title {
   color: #FFF;
   font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
   font-size: 2.5vw; /* 48px */
@@ -2108,7 +2108,7 @@ main {
   margin-bottom: 1.094vw; /* 21px */
 }
 
-.darkwater-subtitle {
+.featured-subtitle {
   color: #D1D5DC;
   font-family: Inter, -apple-system, Roboto, Helvetica, sans-serif;
   font-size: 0.833vw; /* 16px */
@@ -2117,7 +2117,7 @@ main {
   margin-bottom: 1.458vw; /* 28px */
 }
 
-.darkwater-features {
+.featured-features {
   display: flex;
   flex-direction: column;
   gap: 1.094vw; /* 21px */
@@ -2158,7 +2158,7 @@ main {
   line-height: 1.05; /* 21px/20px */
 }
 
-.darkwater-terminal {
+.featured-terminal {
   flex: 1;
   max-width: 40vw; /* Increased for better layout */
   min-width: 20vw;
@@ -2591,4 +2591,38 @@ main {
 main {
   position: relative;
   overflow: hidden;
+}
+
+/* Mobile Responsive Styles for Featured Section */
+@media (max-width: 768px) {
+  .featured-section {
+    padding: 60px 0 40px 0;
+  }
+  
+  .featured-content {
+    flex-direction: column;
+    gap: 40px;
+  }
+  
+  .featured-info,
+  .featured-terminal {
+    max-width: 100%;
+  }
+  
+  .featured-title {
+    font-size: 2rem;
+  }
+  
+  .featured-subtitle {
+    font-size: 1rem;
+  }
+  
+  .feature-item span {
+    font-size: 0.9rem;
+  }
+  
+  .featured-terminal {
+    width: 100%;
+    height: 56.25vw; /* 16:9 aspect ratio */
+  }
 }

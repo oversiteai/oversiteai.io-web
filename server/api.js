@@ -217,6 +217,116 @@ app.delete('/api/solutions/:id', async (req, res) => {
   }
 });
 
+// Generic articles endpoints that work for all content types
+// Get all articles of a specific type
+app.get('/api/:contentType', async (req, res) => {
+  try {
+    const { contentType } = req.params;
+    const dataDir = path.join(__dirname, `../public/data/${contentType}`);
+    
+    // Check if directory exists
+    try {
+      await fs.access(dataDir);
+    } catch {
+      // Directory doesn't exist, return empty array
+      return res.json([]);
+    }
+    
+    const files = await fs.readdir(dataDir);
+    const articles = [];
+
+    for (const file of files) {
+      if (file.endsWith('.json')) {
+        const content = await fs.readFile(path.join(dataDir, file), 'utf-8');
+        articles.push(JSON.parse(content));
+      }
+    }
+
+    articles.sort((a, b) => a.id - b.id);
+    res.json(articles);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Create a new article
+app.post('/api/:contentType', async (req, res) => {
+  try {
+    const { contentType } = req.params;
+    const articleData = req.body;
+    const { id } = articleData;
+    
+    // Check if article already exists
+    const filePath = path.join(__dirname, `../public/data/${contentType}/${id}.json`);
+    try {
+      await fs.access(filePath);
+      return res.status(409).json({ error: `${contentType} article already exists` });
+    } catch {
+      // File doesn't exist, we can create it
+    }
+    
+    // Create directory if it doesn't exist
+    const dataDir = path.join(__dirname, `../public/data/${contentType}`);
+    await fs.mkdir(dataDir, { recursive: true });
+    
+    // Create the JSON file
+    await fs.writeFile(filePath, JSON.stringify(articleData, null, 2));
+    
+    // Create directory for images if it doesn't exist (for content types that support images)
+    if (contentType !== 'featured') {
+      const imageDir = path.join(__dirname, `../public/data/${contentType}/${id}`);
+      await fs.mkdir(imageDir, { recursive: true });
+    }
+    
+    res.json({ success: true, message: `${contentType} article created successfully`, article: articleData });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Update an article
+app.put('/api/:contentType/:id', async (req, res) => {
+  try {
+    const { contentType, id } = req.params;
+    const articleData = req.body;
+    
+    // Ensure the ID matches
+    articleData.id = parseInt(id);
+    
+    // Create directory if it doesn't exist
+    const dataDir = path.join(__dirname, `../public/data/${contentType}`);
+    await fs.mkdir(dataDir, { recursive: true });
+    
+    const filePath = path.join(__dirname, `../public/data/${contentType}/${id}.json`);
+    await fs.writeFile(filePath, JSON.stringify(articleData, null, 2));
+    
+    res.json({ success: true, message: `${contentType} article saved successfully` });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Delete an article
+app.delete('/api/:contentType/:id', async (req, res) => {
+  try {
+    const { contentType, id } = req.params;
+    
+    // Delete JSON file
+    const jsonPath = path.join(__dirname, `../public/data/${contentType}/${id}.json`);
+    await fs.unlink(jsonPath).catch(() => {}); // Ignore if doesn't exist
+    
+    // Delete directory and all its contents (for content types with images)
+    if (contentType !== 'featured') {
+      const dirPath = path.join(__dirname, `../public/data/${contentType}/${id}`);
+      await fs.rm(dirPath, { recursive: true, force: true }).catch(() => {});
+    }
+    
+    res.json({ success: true, message: `${contentType} article deleted successfully` });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Git status endpoint - checks for changes in public/data directory
 app.get('/api/git/status', async (req, res) => {
   try {
@@ -226,14 +336,22 @@ app.get('/api/git/status', async (req, res) => {
     const { stdout: statusOutput } = await execAsync('git status --porcelain public/data', { cwd: projectRoot });
     const hasLocalChanges = statusOutput.trim().length > 0;
     
-    // Check if we're behind the remote
-    await execAsync('git fetch', { cwd: projectRoot });
-    const { stdout: behindOutput } = await execAsync('git rev-list HEAD..origin/main --count', { cwd: projectRoot });
-    const behindCount = parseInt(behindOutput.trim()) || 0;
+    let behindCount = 0;
+    let aheadCount = 0;
     
-    // Check if we're ahead of the remote
-    const { stdout: aheadOutput } = await execAsync('git rev-list origin/main..HEAD --count', { cwd: projectRoot });
-    const aheadCount = parseInt(aheadOutput.trim()) || 0;
+    try {
+      // Check if we're behind the remote
+      await execAsync('git fetch', { cwd: projectRoot });
+      const { stdout: behindOutput } = await execAsync('git rev-list HEAD..origin/main --count', { cwd: projectRoot });
+      behindCount = parseInt(behindOutput.trim()) || 0;
+      
+      // Check if we're ahead of the remote
+      const { stdout: aheadOutput } = await execAsync('git rev-list origin/main..HEAD --count', { cwd: projectRoot });
+      aheadCount = parseInt(aheadOutput.trim()) || 0;
+    } catch (fetchError) {
+      // If git fetch fails (e.g., no network), just continue with local status
+      console.warn('Git fetch failed (network issue?):', fetchError.message);
+    }
     
     // Get list of changed files
     const changedFiles = statusOutput.trim().split('\n').filter(line => line).map(line => {
@@ -250,7 +368,7 @@ app.get('/api/git/status', async (req, res) => {
       aheadRemote: aheadCount > 0,
       behindCount,
       aheadCount,
-      changedFiles
+      changes: changedFiles
     });
   } catch (error) {
     console.error('Git status error:', error);
