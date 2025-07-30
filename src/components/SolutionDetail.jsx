@@ -16,8 +16,12 @@ function SolutionDetail() {
 
   useEffect(() => {
     // Scroll to top when component mounts or id changes
-    window.scrollTo({ top: 0, behavior: 'instant' });
-    document.documentElement.scrollTop = 0; // For older browsers
+    // Small delay to ensure DOM is ready
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0; // For Safari
+    }, 0);
     
     const fetchSolution = async () => {
       try {
