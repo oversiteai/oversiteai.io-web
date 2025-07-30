@@ -421,41 +421,19 @@ function AdminPanelContent() {
     }
   };
 
-  const commitChanges = async () => {
-    if (!commitMessage.trim()) {
-      showToast('Please enter a commit message', 'warning');
-      return;
-    }
-
-    try {
-      const response = await fetch('http://localhost:3001/api/git/commit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: commitMessage })
-      });
-
-      if (response.ok) {
-        showToast('Changes committed successfully!', 'success');
-        setPublishDialogOpen(false);
-        setCommitMessage('');
-        checkGitStatus();
-      } else {
-        const error = await response.json();
-        showToast(`Failed to commit: ${error.message}`, 'error');
-      }
-    } catch (error) {
-      showToast('Failed to commit changes. Make sure the API server is running.', 'error');
-    }
-  };
 
   const pushChanges = async () => {
     try {
       const response = await fetch('http://localhost:3001/api/git/push', {
-        method: 'POST'
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: commitMessage || 'Update content via admin panel' })
       });
 
       if (response.ok) {
-        showToast('Changes pushed successfully!', 'success');
+        showToast('Changes published successfully!', 'success');
+        setPublishDialogOpen(false);
+        setCommitMessage('');
         checkGitStatus();
       } else {
         const error = await response.json();
@@ -802,7 +780,7 @@ function AdminPanelContent() {
       <Dialog
         open={publishDialogOpen}
         onClose={() => setPublishDialogOpen(false)}
-        maxWidth="sm"
+        maxWidth="md"
         fullWidth
       >
         <DialogTitle>Publish Changes</DialogTitle>
@@ -818,15 +796,69 @@ function AdminPanelContent() {
             onChange={(e) => setCommitMessage(e.target.value)}
             placeholder="e.g., Updated solutions content"
             variant="outlined"
+            sx={{ mb: 3 }}
           />
+          
+          {gitStatus?.changes && gitStatus.changes.length > 0 && (
+            <Box>
+              <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600, color: 'var(--White)' }}>
+                Files to be published ({gitStatus.changes.length}):
+              </Typography>
+              <Box sx={{ 
+                maxHeight: '200px', 
+                overflow: 'auto', 
+                backgroundColor: 'var(--Dark-Secondary)', 
+                borderRadius: 1, 
+                p: 2,
+                border: '1px solid var(--Border)'
+              }}>
+                {gitStatus.changes.map((change, index) => (
+                  <Box key={index} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                    <Chip
+                      size="small"
+                      label={
+                        change.status === 'M' ? 'Modified' :
+                        change.status === 'A' ? 'Added' :
+                        change.status === 'D' ? 'Deleted' :
+                        change.status === '??' ? 'New' :
+                        change.status === 'R' ? 'Renamed' :
+                        change.status
+                      }
+                      sx={{
+                        backgroundColor: 
+                          change.status === 'M' ? 'warning.dark' :
+                          change.status === 'A' ? 'success.dark' :
+                          change.status === 'D' ? 'error.dark' :
+                          change.status === '??' ? 'info.dark' :
+                          'grey.700',
+                        color: 'white',
+                        fontSize: '0.75rem',
+                        height: '20px',
+                        mr: 1
+                      }}
+                    />
+                    <Typography variant="body2" sx={{ 
+                      fontFamily: 'monospace', 
+                      fontSize: '0.875rem',
+                      color: 'var(--Text)'
+                    }}>
+                      {change.path}
+                    </Typography>
+                  </Box>
+                ))}
+              </Box>
+            </Box>
+          )}
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setPublishDialogOpen(false)}>Cancel</Button>
-          <Button onClick={commitChanges} variant="contained" disabled={!commitMessage.trim()}>
-            Save Locally
-          </Button>
-          <Button onClick={pushChanges} variant="contained" color="success">
-            Publish Now
+          <Button 
+            onClick={pushChanges} 
+            variant="contained" 
+            color="success"
+            disabled={!commitMessage.trim()}
+          >
+            Publish
           </Button>
         </DialogActions>
       </Dialog>

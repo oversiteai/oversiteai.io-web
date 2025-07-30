@@ -376,6 +376,7 @@ app.get('/api/git/status', async (req, res) => {
   }
 });
 
+
 // Git pull endpoint
 app.post('/api/git/pull', async (req, res) => {
   try {
@@ -412,7 +413,7 @@ app.post('/api/git/push', async (req, res) => {
     
     res.json({
       success: true,
-      message: 'Successfully committed and pushed changes',
+      message: 'Successfully published changes',
       output: stdout
     });
   } catch (error) {
@@ -422,7 +423,7 @@ app.post('/api/git/push', async (req, res) => {
     if (error.message.includes('nothing to commit')) {
       return res.json({
         success: false,
-        message: 'No changes to commit',
+        message: 'No changes to publish',
         noChanges: true
       });
     }
