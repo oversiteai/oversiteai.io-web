@@ -237,6 +237,8 @@ function AdminPanelContent() {
         if (isNew) {
           await loadArticles();
         }
+        // Update git status to reflect the new changes
+        checkGitStatus();
       } else {
         throw new Error('Failed to save');
       }
@@ -264,6 +266,8 @@ function AdminPanelContent() {
         setOriginalArticle(null);
         setDeleteDialogOpen(false);
         navigate(`/admin/articles/${articleType}`);
+        // Update git status to reflect the deletion
+        checkGitStatus();
       } else {
         throw new Error('Failed to delete');
       }
@@ -413,6 +417,8 @@ function AdminPanelContent() {
         const singularType = getSingularType(articleType);
         const articleName = deleted === 1 ? singularType : articleType;
         showToast(`Successfully deleted ${deleted} ${articleName}.`, 'success');
+        // Update git status to reflect the deletions
+        checkGitStatus();
       } else {
         showToast('Failed to delete articles. Make sure the API server is running.', 'error');
       }

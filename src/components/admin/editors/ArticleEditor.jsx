@@ -89,7 +89,9 @@ const ArticleEditor = ({
   };
 
   const getPreviewUrl = () => {
-    return `/oversiteai.io-web/${getSingularType(articleType)}/detail/${article.id}`;
+    // Convert plural articleType to singular for the route
+    const singularType = getSingularType(articleType);
+    return `/oversiteai.io-web/#/${singularType}/detail/${article.id}`;
   };
 
   return (
