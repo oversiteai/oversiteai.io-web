@@ -10,7 +10,9 @@ import {
   ImageList,
   ImageListItem,
   Chip,
-  Divider
+  Divider,
+  FormControlLabel,
+  Switch
 } from '@mui/material';
 import {
   Delete as DeleteIcon,
@@ -40,7 +42,7 @@ const ArticleEditor = ({
       'solutions': 'solution',
       'case-studies': 'case study',
       'blog': 'blog post',
-      'news': 'news article',
+      'media': 'media article',
       'resources': 'resource'
     };
     return typeMap[type] || type;
@@ -101,6 +103,31 @@ const ArticleEditor = ({
       </Typography>
 
       <Stack spacing={3}>
+        <FormControlLabel
+          control={
+            <Switch
+              checked={article.featured || false}
+              onChange={(e) => onFieldChange('featured', e.target.checked)}
+              sx={{
+                '& .MuiSwitch-switchBase.Mui-checked': {
+                  color: 'var(--Green)',
+                },
+                '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                  backgroundColor: 'var(--Green)',
+                },
+              }}
+            />
+          }
+          label="Featured Article"
+          sx={{ 
+            color: 'var(--White)',
+            '& .MuiFormControlLabel-label': { 
+              fontWeight: 600,
+              fontSize: '1rem'
+            }
+          }}
+        />
+        
         <TextField
           fullWidth
           label="Title"

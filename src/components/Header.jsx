@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const Header = () => {
@@ -161,7 +161,7 @@ const Header = () => {
               }
             }}
           >
-            <span>News</span>
+            <span>Media</span>
           </div>
         </nav>
         

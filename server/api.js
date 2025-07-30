@@ -158,7 +158,7 @@ app.get('/api/solutions/:id/images', async (req, res) => {
         }));
       
       res.json(images);
-    } catch (error) {
+    } catch {
       // Directory doesn't exist yet
       res.json([]);
     }
@@ -322,6 +322,51 @@ app.delete('/api/:contentType/:id', async (req, res) => {
     }
     
     res.json({ success: true, message: `${contentType} article deleted successfully` });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Bulk update featured status
+app.post('/api/:contentType/bulk-featured', async (req, res) => {
+  try {
+    const { contentType } = req.params;
+    const { ids, featured } = req.body;
+    
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ error: 'No article IDs provided' });
+    }
+    
+    const dataDir = path.join(__dirname, `../public/data/${contentType}`);
+    const updatePromises = [];
+    
+    for (const id of ids) {
+      const filePath = path.join(dataDir, `${id}.json`);
+      
+      // Read the existing article
+      try {
+        const content = await fs.readFile(filePath, 'utf-8');
+        const article = JSON.parse(content);
+        
+        // Update the featured status
+        article.featured = featured;
+        
+        // Write back to file
+        updatePromises.push(
+          fs.writeFile(filePath, JSON.stringify(article, null, 2))
+        );
+      } catch (error) {
+        console.error(`Failed to update article ${id}:`, error);
+      }
+    }
+    
+    await Promise.all(updatePromises);
+    
+    res.json({ 
+      success: true, 
+      message: `Successfully updated featured status for ${updatePromises.length} articles`,
+      updated: updatePromises.length
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

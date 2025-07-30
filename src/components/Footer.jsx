@@ -79,7 +79,7 @@ const Footer = () => {
             <div className="footer-links">
               <a href="#">About Us</a>
               <a href="#">Careers</a>
-              <a href="#">News</a>
+              <a href="#">Media</a>
               <a href="#">Investors</a>
               <a href="#">Contact</a>
             </div>

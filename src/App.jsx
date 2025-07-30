@@ -58,8 +58,7 @@ function AppContent() {
           const previousType = previousParts[3];
           
           // Define which content types use the same editor
-          const articleEditorTypes = ['solutions', 'case-studies', 'blog', 'news', 'resources'];
-          const featuredEditorTypes = ['featured'];
+          const articleEditorTypes = ['solutions', 'case-studies', 'blog', 'media', 'resources'];
           
           // Check if both types use the same editor
           const currentUsesArticleEditor = articleEditorTypes.includes(currentType);

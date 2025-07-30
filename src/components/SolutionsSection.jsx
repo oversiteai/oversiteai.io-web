@@ -81,14 +81,18 @@ const SolutionsSection = () => {
           const response = await fetch(`/oversiteai.io-web/data/solutions/${id}.json`);
           if (response.ok) {
             const data = await response.json();
-            // Use data from JSON if available, otherwise use fallback
-            const solutionData = {
-              id: data.id || id,
-              title: data.title || fallbackSolutions[id - 1]?.title || `Solution ${id}`,
-              description: data.teaser || data.subtitle || fallbackSolutions[id - 1]?.description || '',
-              image: data.primaryImage || data.image || fallbackSolutions[id - 1]?.image || `/oversiteai.io-web/images/solution${id}.png`
-            };
-            loadedSolutions.push(solutionData);
+            
+            // Only include if featured is true or undefined (for backwards compatibility)
+            if (data.featured !== false) {
+              // Use data from JSON if available, otherwise use fallback
+              const solutionData = {
+                id: data.id || id,
+                title: data.title || fallbackSolutions[id - 1]?.title || `Solution ${id}`,
+                description: data.teaser || data.subtitle || fallbackSolutions[id - 1]?.description || '',
+                image: data.primaryImage || data.image || fallbackSolutions[id - 1]?.image || `/oversiteai.io-web/images/solution${id}.png`
+              };
+              loadedSolutions.push(solutionData);
+            }
             consecutiveFailures = 0;
           } else {
             consecutiveFailures++;
@@ -256,51 +260,53 @@ const SolutionsSection = () => {
           </div>
         </div>
         
-        <div className="solutions-pagination">
-          <div className="pagination-dots">
-            {Array.from({ length: totalPages }, (_, index) => (
-              <div 
-                key={index} 
-                className={`dot ${currentPage === index ? 'active' : ''}`}
-                onClick={() => handlePageChange(index)}
-                style={{ cursor: 'pointer' }}
-              ></div>
-            ))}
+        {totalPages > 1 && (
+          <div className="solutions-pagination">
+            <div className="pagination-dots">
+              {Array.from({ length: totalPages }, (_, index) => (
+                <div 
+                  key={index} 
+                  className={`dot ${currentPage === index ? 'active' : ''}`}
+                  onClick={() => handlePageChange(index)}
+                  style={{ cursor: 'pointer' }}
+                ></div>
+              ))}
+            </div>
+            
+            <div style={{ display: 'flex', gap: '1vw', alignItems: 'center' }}>
+              <button 
+                className="btn btn-secondary" 
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 0}
+                style={{ 
+                  background: 'transparent', 
+                  border: '1px solid var(--Blue)',
+                  color: currentPage === 0 ? 'var(--Gray)' : 'var(--Blue)',
+                  opacity: currentPage === 0 ? 0.5 : 1,
+                  cursor: currentPage === 0 ? 'not-allowed' : 'pointer',
+                  minWidth: '8vw'
+                }}
+              >
+                Previous
+              </button>
+              <button 
+                className="btn btn-secondary" 
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage >= totalPages - 1}
+                style={{
+                  background: 'transparent', 
+                  border: '1px solid var(--Blue)',
+                  color: currentPage >= totalPages - 1 ? 'var(--Gray)' : 'var(--Blue)',
+                  opacity: currentPage >= totalPages - 1 ? 0.5 : 1,
+                  cursor: currentPage >= totalPages - 1 ? 'not-allowed' : 'pointer',
+                  minWidth: '8vw'
+                }}
+              >
+                Next
+              </button>
+            </div>
           </div>
-          
-          <div style={{ display: 'flex', gap: '1vw', alignItems: 'center' }}>
-            <button 
-              className="btn btn-secondary" 
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 0}
-              style={{ 
-                background: 'transparent', 
-                border: '1px solid var(--Blue)',
-                color: currentPage === 0 ? 'var(--Gray)' : 'var(--Blue)',
-                opacity: currentPage === 0 ? 0.5 : 1,
-                cursor: currentPage === 0 ? 'not-allowed' : 'pointer',
-                minWidth: '8vw'
-              }}
-            >
-              Previous
-            </button>
-            <button 
-              className="btn btn-secondary" 
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage >= totalPages - 1}
-              style={{
-                background: 'transparent', 
-                border: '1px solid var(--Blue)',
-                color: currentPage >= totalPages - 1 ? 'var(--Gray)' : 'var(--Blue)',
-                opacity: currentPage >= totalPages - 1 ? 0.5 : 1,
-                cursor: currentPage >= totalPages - 1 ? 'not-allowed' : 'pointer',
-                minWidth: '8vw'
-              }}
-            >
-              Next
-            </button>
-          </div>
-        </div>
+        )}
       </div>
     </section>
   );

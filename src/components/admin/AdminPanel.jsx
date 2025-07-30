@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -39,7 +39,10 @@ import {
   Add as AddIcon,
   ArrowBack as ArrowBackIcon,
   CloudUpload as CloudUploadIcon,
-  CloudDownload as CloudDownloadIcon
+  CloudDownload as CloudDownloadIcon,
+  Star as StarIcon,
+  StarBorder as StarBorderIcon,
+  StarRate as StarRateIcon
 } from '@mui/icons-material';
 import { SnackbarProvider as ToastProvider, useSnackbar as useToast } from 'notistack';
 import adminTheme from '../../adminTheme';
@@ -67,6 +70,7 @@ function AdminPanelContent() {
   const [commitMessage, setCommitMessage] = useState('');
   const [changesDialogOpen, setChangesDialogOpen] = useState(false);
   const [undoDialogOpen, setUndoDialogOpen] = useState(false);
+  const [bulkUpdating, setBulkUpdating] = useState(false);
 
   // If we have URL parameters, select the article after loading
   useEffect(() => {
@@ -125,7 +129,7 @@ function AdminPanelContent() {
       'solutions': 'solution',
       'case-studies': 'case study',
       'blog': 'blog post',
-      'news': 'news article',
+      'media': 'media article',
       'resources': 'resource',
       'featured': 'featured section'
     };
@@ -203,6 +207,15 @@ function AdminPanelContent() {
       ...prev,
       [field]: value
     }));
+    
+    // If the featured field is being changed, update the articles list to reflect it
+    if (field === 'featured' && editedArticle) {
+      setArticles(prev => prev.map(article => 
+        article.id === editedArticle.id 
+          ? { ...article, featured: value }
+          : article
+      ));
+    }
   };
 
   const hasUnsavedChanges = () => {
@@ -243,7 +256,7 @@ function AdminPanelContent() {
       } else {
         throw new Error('Failed to save');
       }
-    } catch (error) {
+    } catch {
       showToast('Failed to save. Make sure the API server is running.', 'error');
     }
     setSaving(false);
@@ -272,7 +285,7 @@ function AdminPanelContent() {
       } else {
         throw new Error('Failed to delete');
       }
-    } catch (error) {
+    } catch {
       showToast('Failed to delete. Make sure the API server is running.', 'error');
     }
   };
@@ -348,6 +361,7 @@ function AdminPanelContent() {
         images: [],
         body: '',
         tags: [],
+        featured: false,
         type: articleType
       };
     }
@@ -423,8 +437,59 @@ function AdminPanelContent() {
       } else {
         showToast('Failed to delete articles. Make sure the API server is running.', 'error');
       }
-    } catch (error) {
+    } catch {
       showToast('Failed to delete articles. Make sure the API server is running.', 'error');
+    }
+  };
+
+  const toggleSelectedFeatured = async () => {
+    setBulkUpdating(true);
+    try {
+      // Get selected articles
+      const selectedArticles = articles.filter(a => selectedArticleIds.includes(a.id));
+      
+      // Determine the new featured state (if any are not featured, make all featured)
+      const hasUnfeatured = selectedArticles.some(a => !a.featured);
+      const newFeaturedState = hasUnfeatured;
+      
+      const response = await fetch(`http://localhost:3001/api/${articleType}/bulk-featured`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ids: selectedArticleIds,
+          featured: newFeaturedState
+        })
+      });
+      
+      if (response.ok) {
+        // Update local state
+        setArticles(prev => prev.map(article => {
+          if (selectedArticleIds.includes(article.id)) {
+            return { ...article, featured: newFeaturedState };
+          }
+          return article;
+        }));
+        
+        // Update edited article if it's one of the selected
+        if (editedArticle && selectedArticleIds.includes(editedArticle.id)) {
+          setEditedArticle(prev => ({ ...prev, featured: newFeaturedState }));
+          setOriginalArticle(prev => ({ ...prev, featured: newFeaturedState }));
+        }
+        
+        const updated = selectedArticleIds.length;
+        const singularType = getSingularType(articleType);
+        const articleName = updated === 1 ? singularType : articleType;
+        showToast(`${updated} ${articleName} ${newFeaturedState ? 'featured' : 'unfeatured'} successfully!`, 'success');
+        
+        // Update git status to reflect the changes
+        checkGitStatus();
+      } else {
+        showToast('Failed to update featured status. Make sure the API server is running.', 'error');
+      }
+    } catch {
+      showToast('Failed to update featured status. Make sure the API server is running.', 'error');
+    } finally {
+      setBulkUpdating(false);
     }
   };
 
@@ -446,7 +511,7 @@ function AdminPanelContent() {
         const error = await response.json();
         showToast(`Failed to push: ${error.message}`, 'error');
       }
-    } catch (error) {
+    } catch {
       showToast('Failed to push changes. Make sure the API server is running.', 'error');
     }
   };
@@ -465,7 +530,7 @@ function AdminPanelContent() {
         const error = await response.json();
         showToast(`Failed to pull: ${error.message}`, 'error');
       }
-    } catch (error) {
+    } catch {
       showToast('Failed to pull changes. Make sure the API server is running.', 'error');
     }
   };
@@ -490,7 +555,7 @@ function AdminPanelContent() {
         const error = await response.json();
         showToast(`Failed to undo changes: ${error.message}`, 'error');
       }
-    } catch (error) {
+    } catch {
       showToast('Failed to undo changes. Make sure the API server is running.', 'error');
     }
   };
@@ -593,7 +658,7 @@ function AdminPanelContent() {
                   <MenuItem value="solutions" sx={{ fontSize: '0.875rem', pl: 3 }}>Solutions</MenuItem>
                   <MenuItem value="case-studies" sx={{ fontSize: '0.875rem', pl: 3 }}>Case Studies</MenuItem>
                   <MenuItem value="blog" sx={{ fontSize: '0.875rem', pl: 3 }}>Blog Posts</MenuItem>
-                  <MenuItem value="news" sx={{ fontSize: '0.875rem', pl: 3 }}>News</MenuItem>
+                  <MenuItem value="media" sx={{ fontSize: '0.875rem', pl: 3 }}>Media</MenuItem>
                   <MenuItem value="resources" sx={{ fontSize: '0.875rem', pl: 3 }}>Resources</MenuItem>
                   <ListSubheader sx={{ 
                     backgroundColor: 'var(--Dark-Base)', 
@@ -673,9 +738,12 @@ function AdminPanelContent() {
                                 <Typography variant="body2" sx={{ color: 'var(--Green)', fontWeight: 600 }}>
                                   #{article.id}
                                 </Typography>
-                                <Typography variant="body2" noWrap sx={{ color: 'var(--Text)' }}>
+                                <Typography variant="body2" noWrap sx={{ color: 'var(--Text)', flex: 1 }}>
                                   {typeof article.title === 'object' ? article.title?.text || 'Untitled' : article.title || 'Untitled'}
                                 </Typography>
+                                {article.featured && (
+                                  <StarIcon sx={{ fontSize: '1rem', color: 'var(--Yellow)' }} />
+                                )}
                               </Box>
                             }
                           />
@@ -714,15 +782,34 @@ function AdminPanelContent() {
                   New {capitalizeArticleType(getSingularType(articleType))}
                 </Button>
                 {selectedArticleIds.length > 0 && (
-                  <Button
-                    fullWidth
-                    variant="outlined"
-                    color="error"
-                    startIcon={<DeleteIcon />}
-                    onClick={() => setBulkDeleteDialogOpen(true)}
-                  >
-                    Delete Selected ({selectedArticleIds.length})
-                  </Button>
+                  <Stack spacing={1}>
+                    <Button
+                      fullWidth
+                      variant="outlined"
+                      startIcon={<StarRateIcon />}
+                      onClick={toggleSelectedFeatured}
+                      disabled={bulkUpdating}
+                      sx={{ 
+                        borderColor: 'var(--Yellow)',
+                        color: 'var(--Yellow)',
+                        '&:hover': {
+                          borderColor: 'var(--Yellow)',
+                          backgroundColor: 'rgba(255, 193, 7, 0.08)'
+                        }
+                      }}
+                    >
+                      {bulkUpdating ? 'Updating...' : `Toggle Featured (${selectedArticleIds.length})`}
+                    </Button>
+                    <Button
+                      fullWidth
+                      variant="outlined"
+                      color="error"
+                      startIcon={<DeleteIcon />}
+                      onClick={() => setBulkDeleteDialogOpen(true)}
+                    >
+                      Delete Selected ({selectedArticleIds.length})
+                    </Button>
+                  </Stack>
                 )}
               </Box>
             </CardContent>
