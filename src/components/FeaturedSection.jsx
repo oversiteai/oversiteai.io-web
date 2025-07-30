@@ -1,12 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import EditIcon from '@mui/icons-material/Edit';
 
 const FeaturedSection = () => {
+  const navigate = useNavigate();
   const [videoEnded, setVideoEnded] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [featuredData, setFeaturedData] = useState(null);
   const [loading, setLoading] = useState(true);
   const videoRef = useRef(null);
   const sectionRef = useRef(null);
+  const isDevMode = process.env.NODE_ENV === 'development';
 
   // Fetch featured data
   useEffect(() => {
@@ -122,6 +126,17 @@ const FeaturedSection = () => {
               <div className="flagship-badge">
                 {renderIcon(featuredData.badge.icon, 'icon-featured')}
                 <span>{featuredData.badge.text}</span>
+                {isDevMode && (
+                  <EditIcon
+                    onClick={() => navigate(`/admin/articles/featured/${featuredData.id}`)}
+                    style={{ 
+                      fontSize: '1.2em', 
+                      marginLeft: '0.5em',
+                      cursor: 'pointer',
+                      color: 'var(--Blue)'
+                    }}
+                  />
+                )}
               </div>
             )}
             

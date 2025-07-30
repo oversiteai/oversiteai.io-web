@@ -228,7 +228,7 @@ const SolutionsSection = () => {
                                 onClick={(e) => {
                                   e.preventDefault();
                                   e.stopPropagation();
-                                  navigate(`/admin/solutions/${solution.id}`);
+                                  navigate(`/admin/articles/solutions/${solution.id}`);
                                 }}
                                 style={{ 
                                   fontSize: '1.2em', 

@@ -102,7 +102,7 @@ function SolutionDetail() {
           {isDevMode && (
             <div 
               className="nav-button nav-button-right"
-              onClick={() => navigate(`/admin/solutions/${id}`)}
+              onClick={() => navigate(`/admin/articles/solutions/${id}`)}
             >
               <EditIcon style={{ fontSize: '1.2vw' }} />
               <span>Edit</span>

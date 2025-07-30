@@ -23,6 +23,7 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
+  ListSubheader,
   MenuItem,
   Select,
   Skeleton,
@@ -549,7 +550,7 @@ function AdminPanelContent() {
           <Card sx={{ height: '80vh', display: 'flex', flexDirection: 'column' }}>
             <CardContent sx={{ pb: 0 }}>
               <FormControl fullWidth sx={{ mb: 2 }}>
-                <InputLabel>Article Type</InputLabel>
+                <InputLabel>Content Type</InputLabel>
                 <Select
                   value={articleType}
                   onChange={(e) => {
@@ -557,14 +558,35 @@ function AdminPanelContent() {
                     setArticleType(newType);
                     navigate(`/admin/articles/${newType}`);
                   }}
-                  label="Article Type"
+                  label="Content Type"
                 >
-                  <MenuItem value="solutions">Solutions</MenuItem>
-                  <MenuItem value="featured">Featured</MenuItem>
-                  <MenuItem value="case-studies">Case Studies</MenuItem>
-                  <MenuItem value="blog">Blog Posts</MenuItem>
-                  <MenuItem value="news">News</MenuItem>
-                  <MenuItem value="resources">Resources</MenuItem>
+                  <ListSubheader sx={{ 
+                    backgroundColor: 'var(--Dark-Base)', 
+                    color: 'var(--Blue)',
+                    fontSize: '1rem',
+                    fontWeight: 700,
+                    lineHeight: '2.5rem',
+                    borderBottom: '1px solid var(--Border)',
+                    letterSpacing: '0.05em',
+                    textTransform: 'uppercase'
+                  }}>Articles</ListSubheader>
+                  <MenuItem value="solutions" sx={{ fontSize: '0.875rem', pl: 3 }}>Solutions</MenuItem>
+                  <MenuItem value="case-studies" sx={{ fontSize: '0.875rem', pl: 3 }}>Case Studies</MenuItem>
+                  <MenuItem value="blog" sx={{ fontSize: '0.875rem', pl: 3 }}>Blog Posts</MenuItem>
+                  <MenuItem value="news" sx={{ fontSize: '0.875rem', pl: 3 }}>News</MenuItem>
+                  <MenuItem value="resources" sx={{ fontSize: '0.875rem', pl: 3 }}>Resources</MenuItem>
+                  <ListSubheader sx={{ 
+                    backgroundColor: 'var(--Dark-Base)', 
+                    color: 'var(--Blue)',
+                    fontSize: '1rem',
+                    fontWeight: 700,
+                    lineHeight: '2.5rem',
+                    borderBottom: '1px solid var(--Border)',
+                    letterSpacing: '0.05em',
+                    textTransform: 'uppercase',
+                    mt: 1
+                  }}>Other</ListSubheader>
+                  <MenuItem value="featured" sx={{ fontSize: '0.875rem', pl: 3 }}>Featured</MenuItem>
                 </Select>
               </FormControl>
 
