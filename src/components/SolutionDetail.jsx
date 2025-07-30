@@ -15,8 +15,9 @@ function SolutionDetail() {
   const isDevMode = process.env.NODE_ENV === 'development';
 
   useEffect(() => {
-    // Scroll to top when component mounts
-    window.scrollTo(0, 0);
+    // Scroll to top when component mounts or id changes
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    document.documentElement.scrollTop = 0; // For older browsers
     
     const fetchSolution = async () => {
       try {
