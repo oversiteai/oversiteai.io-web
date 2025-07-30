@@ -51,7 +51,7 @@ import { ArticleEditor, FeaturedEditor } from './editors';
 function AdminPanelContent() {
   const navigate = useNavigate();
   const { contentType: urlContentType, id: urlId } = useParams();
-  const { enqueueSnackbar: enqueueToast, closeSnackbar: closeToast } = useToast();
+  const { enqueueSnackbar: enqueueToast } = useToast();
   
   const [articles, setArticles] = useState([]);
   const [selectedArticle, setSelectedArticle] = useState(null);
@@ -80,7 +80,7 @@ function AdminPanelContent() {
         selectArticle(article);
       }
     }
-  }, [urlId, articles]);
+  }, [urlId, articles]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Load all articles on mount and when article type changes
   useEffect(() => {
@@ -92,7 +92,7 @@ function AdminPanelContent() {
     // Clear articles before loading new ones to prevent stale data issues
     setArticles([]);
     loadArticles();
-  }, [articleType]);
+  }, [articleType]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Git status checking
   useEffect(() => {

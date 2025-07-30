@@ -90,7 +90,8 @@ function AppContent() {
       // Update location without transition
       setDisplayLocation(location);
     }
-  }, [location]); // Only depend on location changes
+  }, [location]); // eslint-disable-line react-hooks/exhaustive-deps
+  // Only depend on location changes - displayLocation and isTransitioning are intentionally excluded
   
   return (
     <div className="App">
@@ -101,7 +102,7 @@ function AppContent() {
             <Route path="/" element={<HomePage />} />
             <Route path="/solution/detail/:id" element={<SolutionDetail />} />
             {/* Admin routes - only in development */}
-            {process.env.NODE_ENV === 'development' && (
+            {import.meta.env.DEV && (
               <>
                 <Route path="/admin" element={<Navigate to="/admin/articles/solutions" replace />} />
                 <Route path="/admin/articles" element={<Navigate to="/admin/articles/solutions" replace />} />
