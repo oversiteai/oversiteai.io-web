@@ -66,6 +66,7 @@ function AdminPanelContent() {
   const [publishDialogOpen, setPublishDialogOpen] = useState(false);
   const [commitMessage, setCommitMessage] = useState('');
   const [changesDialogOpen, setChangesDialogOpen] = useState(false);
+  const [undoDialogOpen, setUndoDialogOpen] = useState(false);
 
   // If we have URL parameters, select the article after loading
   useEffect(() => {
@@ -469,6 +470,31 @@ function AdminPanelContent() {
     }
   };
 
+  const undoAllChanges = async () => {
+    try {
+      const response = await fetch('http://localhost:3001/api/git/undo', {
+        method: 'POST'
+      });
+
+      if (response.ok) {
+        showToast('All changes have been reverted!', 'success');
+        setUndoDialogOpen(false);
+        // Reset the current editing state
+        setSelectedArticle(null);
+        setEditedArticle(null);
+        setOriginalArticle(null);
+        // Reload articles and git status
+        await loadArticles();
+        await checkGitStatus();
+      } else {
+        const error = await response.json();
+        showToast(`Failed to undo changes: ${error.message}`, 'error');
+      }
+    } catch (error) {
+      showToast('Failed to undo changes. Make sure the API server is running.', 'error');
+    }
+  };
+
   return (
     <Container maxWidth="xl" sx={{ py: 4 }}>
       {gitStatus && (
@@ -505,6 +531,16 @@ function AdminPanelContent() {
                     )}
                   </Box>
                   <Stack direction="row" spacing={2}>
+                    {gitStatus.changes && gitStatus.changes.length > 0 && (
+                      <Button
+                        variant="outlined"
+                        color="warning"
+                        onClick={() => setUndoDialogOpen(true)}
+                        disabled={gitLoading}
+                      >
+                        Undo All Changes
+                      </Button>
+                    )}
                     <Button
                       variant="outlined"
                       startIcon={<CloudDownloadIcon />}
@@ -876,7 +912,7 @@ function AdminPanelContent() {
         maxWidth="md"
         fullWidth
       >
-        <DialogTitle>Uncommitted Changes</DialogTitle>
+        <DialogTitle>Unpublished Changes</DialogTitle>
         <DialogContent>
           <List>
             {gitStatus?.changes?.map((change, index) => (
@@ -904,6 +940,28 @@ function AdminPanelContent() {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setChangesDialogOpen(false)}>Close</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Undo All Changes Dialog */}
+      <Dialog
+        open={undoDialogOpen}
+        onClose={() => setUndoDialogOpen(false)}
+      >
+        <DialogTitle>Undo All Changes</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to undo all unpublished changes? This will revert all modifications, additions, and deletions in your content.
+          </DialogContentText>
+          {gitStatus?.changes && gitStatus.changes.length > 0 && (
+            <Alert severity="warning" sx={{ mt: 2 }}>
+              This will undo {gitStatus.changes.length} {gitStatus.changes.length === 1 ? 'change' : 'changes'} and cannot be reversed.
+            </Alert>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setUndoDialogOpen(false)}>Cancel</Button>
+          <Button onClick={undoAllChanges} color="warning" variant="contained">Undo All Changes</Button>
         </DialogActions>
       </Dialog>
     </Container>

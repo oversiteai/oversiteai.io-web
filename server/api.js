@@ -395,6 +395,27 @@ app.post('/api/git/pull', async (req, res) => {
   }
 });
 
+// Git undo endpoint - reverts all changes in public/data
+app.post('/api/git/undo', async (req, res) => {
+  try {
+    const projectRoot = path.join(__dirname, '..');
+    
+    // Clean any untracked files in public/data
+    await execAsync('git clean -fd public/data', { cwd: projectRoot });
+    
+    // Checkout public/data to revert all changes
+    await execAsync('git checkout public/data', { cwd: projectRoot });
+    
+    res.json({
+      success: true,
+      message: 'Successfully reverted all changes'
+    });
+  } catch (error) {
+    console.error('Git undo error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Git push endpoint - commits and pushes changes in public/data
 app.post('/api/git/push', async (req, res) => {
   try {
