@@ -14,5 +14,6 @@
     "Field Operations",
     "Compliance"
   ],
-  "primaryImage": "/oversiteai.io-web/images/geofence.png"
+  "primaryImage": "/oversiteai.io-web/images/geofence.png",
+  "featured": false
 }

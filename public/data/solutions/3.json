@@ -15,5 +15,6 @@
     "Real-time",
     "Permits"
   ],
-  "primaryImage": "/oversiteai.io-web/images/realtime.png"
+  "primaryImage": "/oversiteai.io-web/images/realtime.png",
+  "featured": true
 }

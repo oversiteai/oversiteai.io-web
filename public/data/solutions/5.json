@@ -18,5 +18,6 @@
     "Blockchain",
     "Legal Compliance"
   ],
-  "primaryImage": "/oversiteai.io-web/images/digital_custody_chain.png"
+  "primaryImage": "/oversiteai.io-web/images/digital_custody_chain.png",
+  "featured": false
 }

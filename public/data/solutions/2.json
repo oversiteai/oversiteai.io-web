@@ -15,5 +15,6 @@
     "Automation",
     "Data Accuracy"
   ],
-  "primaryImage": "/oversiteai.io-web/images/bluetooth.png"
+  "primaryImage": "/oversiteai.io-web/images/bluetooth.png",
+  "featured": true
 }

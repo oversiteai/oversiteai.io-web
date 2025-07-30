@@ -14,5 +14,6 @@
     "Documentation",
     "Regulatory"
   ],
-  "primaryImage": "/oversiteai.io-web/images/automated_uic.png"
+  "primaryImage": "/oversiteai.io-web/images/automated_uic.png",
+  "featured": true
 }
