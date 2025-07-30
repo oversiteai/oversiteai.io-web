@@ -31,8 +31,15 @@ function AppContent() {
   const location = useLocation();
   const [displayLocation, setDisplayLocation] = useState(location);
   const [transitionStage, setTransitionStage] = useState('enter');
+  const [isTransitioning, setIsTransitioning] = useState(false);
   
   useEffect(() => {
+    // Skip if we're already transitioning
+    if (isTransitioning) return;
+    
+    // Skip if location hasn't actually changed
+    if (location.pathname === displayLocation.pathname) return;
+    
     // Determine if we need a page transition
     const needsTransition = (currentPath, previousPath) => {
       const currentParts = currentPath.split('/');
@@ -70,16 +77,21 @@ function AppContent() {
     };
     
     if (needsTransition(location.pathname, displayLocation.pathname)) {
+      setIsTransitioning(true);
       setTransitionStage('exit');
       setTimeout(() => {
         setDisplayLocation(location);
         setTransitionStage('enter');
+        // Reset transitioning flag after animation completes
+        setTimeout(() => {
+          setIsTransitioning(false);
+        }, 600);
       }, 600);
     } else {
       // Update location without transition
       setDisplayLocation(location);
     }
-  }, [location, displayLocation]);
+  }, [location]); // Only depend on location changes
   
   return (
     <div className="App">
