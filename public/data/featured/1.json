@@ -56,11 +56,17 @@
       "showOnIntersection": true,
       "threshold": 0.3
     },
-    "fallbackImage": "/oversiteai.io-web/images/darkwater4.png",
+    "fallbackImage": "images/darkwater4.png",
     "dots": [
-      { "color": "blue" },
-      { "color": "yellow" },
-      { "color": "blue" }
+      {
+        "color": "blue"
+      },
+      {
+        "color": "yellow"
+      },
+      {
+        "color": "blue"
+      }
     ],
     "statusLines": [
       {
@@ -88,12 +94,18 @@
     "gradient": "linear-gradient(180deg, #03262B 0%, var(--Dark-Base) 100%)",
     "circles": [
       {
-        "position": { "left": "25vw", "top": "2.083vw" },
+        "position": {
+          "left": "25vw",
+          "top": "2.083vw"
+        },
         "size": "17.5vw",
         "color": "rgba(77, 255, 176, calc(0.03 * var(--animation-opacity)))"
       },
       {
-        "position": { "right": "5.417vw", "bottom": "2.083vw" },
+        "position": {
+          "right": "5.417vw",
+          "bottom": "2.083vw"
+        },
         "size": "17.5vw",
         "color": "rgba(0, 174, 239, calc(0.03 * var(--animation-opacity)))"
       }
