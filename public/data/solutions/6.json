@@ -15,5 +15,7 @@
     "Asset Tracking",
     "Supply Chain"
   ],
-  "featured": true
+  "featured": true,
+  "cardImage": "images/bluetooth.png",
+  "detailImage": "images/geofence.png"
 }

@@ -15,5 +15,7 @@
     "Regulatory"
   ],
   "primaryImage": "images/automated_uic.png",
-  "featured": false
+  "featured": false,
+  "cardImage": "images/automated_uic.png",
+  "detailImage": "images/automated_uic.png"
 }

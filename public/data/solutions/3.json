@@ -16,5 +16,7 @@
     "Permits"
   ],
   "primaryImage": "images/realtime.png",
-  "featured": true
+  "featured": true,
+  "cardImage": "images/realtime.png",
+  "detailImage": "images/digital_custody_chain.png"
 }

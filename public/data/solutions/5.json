@@ -19,5 +19,7 @@
     "Legal Compliance"
   ],
   "primaryImage": "images/digital_custody_chain.png",
-  "featured": false
+  "featured": false,
+  "cardImage": "images/automated_uic.png",
+  "detailImage": "images/digital_custody_chain.png"
 }
