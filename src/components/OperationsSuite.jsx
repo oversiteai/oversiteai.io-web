@@ -2,62 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import EditIcon from '@mui/icons-material/Edit';
 
-const FeatureCard = ({ solution, isDevMode, navigate }) => {
-  return (
-    <Link 
-      to={`/solution/detail/${solution.id}`} 
-      className="operations-card"
-      style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}
-    >
-      <div className="operations-card-image-container">
-        <img className="operations-card-image" src={solution.image} alt={solution.title} />
-        {solution.featured && (
-          <div className="operations-featured-badge">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="var(--Blue)" stroke="var(--Blue)" strokeWidth="2" strokeLinejoin="round"/>
-            </svg>
-          </div>
-        )}
-        <div className="operations-external-link-icon">
-          <svg viewBox="0 0 14 14" fill="none">
-            <path className="icon-external-link" d="M8.75 1.75H12.25V5.25" strokeWidth="1.16667"/>
-            <path className="icon-external-link" d="M5.8335 8.16667L12.2502 1.75" strokeWidth="1.16667"/>
-            <path className="icon-external-link" d="M10.5 7.58333V11.0833C10.5 11.3928 10.3771 11.6895 10.1583 11.9083C9.9395 12.1271 9.64275 12.25 9.33333 12.25H2.91667C2.60725 12.25 2.3105 12.1271 2.09171 11.9083C1.87292 11.6895 1.75 11.3928 1.75 11.0833V4.66667C1.75 4.35725 1.87292 4.0605 2.09171 3.84171C2.3105 3.62292 2.60725 3.5 2.91667 3.5H6.41667" strokeWidth="1.16667"/>
-          </svg>
-        </div>
-      </div>
-      
-      <div className="operations-card-content">
-        <div className="operations-card-body">
-          <h3 className="operations-card-title">{solution.title}</h3>
-          <p className="operations-card-description">{solution.description}</p>
-        </div>
-        
-        <div className="operations-learn-more">
-          <span>Learn More</span>
-          <svg viewBox="0 0 14 15" fill="none">
-            <path className="icon-external-link" d="M2.9165 7.81006H11.0832" strokeWidth="1.16667"/>
-            <path className="icon-external-link" d="M7 3.72681L11.0833 7.81014L7 11.8935" strokeWidth="1.16667"/>
-          </svg>
-          {isDevMode && (
-            <EditIcon
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                navigate(`/admin/articles/solutions/${solution.id}`);
-              }}
-              style={{ 
-                fontSize: '1.2em', 
-                marginLeft: '0.5em',
-                cursor: 'pointer'
-              }}
-            />
-          )}
-        </div>
-      </div>
-    </Link>
-  );
-};
+// Removed FeatureCard component - will use inline rendering like SolutionsSection
 
 const OperationsSuite = () => {
   const navigate = useNavigate();
@@ -214,34 +159,68 @@ const OperationsSuite = () => {
           </div>
         </div>
 
-        <div className="operations-features-grid">
+        <div className="operations-grid">
           {loading ? (
             <div style={{ textAlign: 'center', padding: '4rem', gridColumn: '1 / -1' }}>
               <p style={{ color: 'var(--Text)', fontSize: '1.2rem' }}>Loading solutions...</p>
             </div>
           ) : solutions.length > 0 ? (
-            // Group solutions into rows of 3
-            Array.from({ length: Math.ceil(solutions.length / 3) }, (_, rowIndex) => (
-              <div key={rowIndex} className="operations-grid-row">
-                {solutions.slice(rowIndex * 3, (rowIndex + 1) * 3).map((solution) => (
-                  <FeatureCard
-                    key={solution.id}
-                    solution={solution}
-                    isDevMode={isDevMode}
-                    navigate={navigate}
-                  />
-                ))}
-                {/* Add empty placeholders to maintain grid layout */}
-                {Array.from({ 
-                  length: Math.max(0, 3 - (solutions.slice(rowIndex * 3, (rowIndex + 1) * 3).length))
-                }).map((_, index) => (
-                  <div key={`placeholder-${rowIndex}-${index}`} className="operations-card-placeholder"></div>
-                ))}
-              </div>
+            solutions.map((solution) => (
+              <Link 
+                key={solution.id}
+                to={`/solution/detail/${solution.id}`} 
+                className="operations-card" 
+                style={{ textDecoration: 'none', color: 'inherit' }}
+              >
+                <div className="operations-card-image">
+                  <img src={solution.image} alt={solution.title} />
+                  {solution.featured && (
+                    <div className="operations-featured-badge">
+                      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="var(--Blue)" stroke="var(--Blue)" strokeWidth="2" strokeLinejoin="round"/>
+                      </svg>
+                    </div>
+                  )}
+                  <div className="operations-external-link-icon">
+                    <svg viewBox="0 0 14 14" fill="none">
+                      <path className="icon-external-link" d="M8.75 1.75H12.25V5.25" strokeWidth="1.16667"/>
+                      <path className="icon-external-link" d="M5.8335 8.16667L12.2502 1.75" strokeWidth="1.16667"/>
+                      <path className="icon-external-link" d="M10.5 7.58333V11.0833C10.5 11.3928 10.3771 11.6895 10.1583 11.9083C9.9395 12.1271 9.64275 12.25 9.33333 12.25H2.91667C2.60725 12.25 2.3105 12.1271 2.09171 11.9083C1.87292 11.6895 1.75 11.3928 1.75 11.0833V4.66667C1.75 4.35725 1.87292 4.0605 2.09171 3.84171C2.3105 3.62292 2.60725 3.5 2.91667 3.5H6.41667" strokeWidth="1.16667"/>
+                    </svg>
+                  </div>
+                </div>
+                
+                <div className="operations-card-content">
+                  <h3 className="operations-card-title">{solution.title}</h3>
+                  <p className="operations-card-description">{solution.description}</p>
+                  
+                  <div className="operations-learn-more">
+                    <span>Learn More</span>
+                    <svg viewBox="0 0 14 15" fill="none">
+                      <path className="icon-external-link" d="M2.9165 7.81006H11.0832" strokeWidth="1.16667"/>
+                      <path className="icon-external-link" d="M7 3.72681L11.0833 7.81014L7 11.8935" strokeWidth="1.16667"/>
+                    </svg>
+                    {isDevMode && (
+                      <EditIcon
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          navigate(`/admin/articles/solutions/${solution.id}`);
+                        }}
+                        style={{ 
+                          fontSize: '1.2em', 
+                          marginLeft: '0.5em',
+                          cursor: 'pointer'
+                        }}
+                      />
+                    )}
+                  </div>
+                </div>
+              </Link>
             ))
           ) : (
             <div style={{ textAlign: 'center', padding: '4rem', gridColumn: '1 / -1' }}>
-              <p style={{ color: 'var(--Text)', fontSize: '1.2rem' }}>No featured solutions available.</p>
+              <p style={{ color: 'var(--Text)', fontSize: '1.2rem' }}>No solutions available.</p>
             </div>
           )}
         </div>
