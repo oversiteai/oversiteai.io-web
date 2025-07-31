@@ -38,6 +38,7 @@ const ArticleEditor = ({
   const editorRef = useRef(null);
   const imageUploadRef = useRef(null);
   const [uploadingImages, setUploadingImages] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
 
   const getSingularType = (type) => {
     const typeMap = {
@@ -95,6 +96,88 @@ const ArticleEditor = ({
     
     // Reset the input to allow uploading the same file again
     event.target.value = '';
+  };
+
+  const handleFileDrop = async (files) => {
+    const validFiles = Array.from(files).filter(file => {
+      const validTypes = ['image/png', 'image/jpg', 'image/jpeg', 'image/gif', 'image/webp', 'image/svg+xml', 'video/mp4'];
+      return validTypes.includes(file.type);
+    });
+
+    if (validFiles.length === 0) {
+      alert('Please drop valid image or video files.');
+      return;
+    }
+
+    setUploadingImages(true);
+    try {
+      const uploadedImages = [];
+      
+      for (const file of validFiles) {
+        const formData = new FormData();
+        formData.append('image', file);
+        
+        const response = await fetch(`http://localhost:3001/api/${articleType}/${article.id}/upload`, {
+          method: 'POST',
+          body: formData
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          uploadedImages.push(data.url);
+        } else {
+          console.error('Failed to upload image:', file.name);
+        }
+      }
+      
+      if (uploadedImages.length > 0) {
+        onFieldChange('images', [...(article.images || []), ...uploadedImages]);
+      }
+    } catch (error) {
+      console.error('Error uploading images:', error);
+      alert('Failed to upload images. Please try again.');
+    } finally {
+      setUploadingImages(false);
+    }
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  };
+
+  const handleDragEnter = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // Only set isDragging to false if we're leaving the dropzone entirely
+    const rect = e.currentTarget.getBoundingClientRect();
+    if (
+      e.clientX <= rect.left ||
+      e.clientX >= rect.right ||
+      e.clientY <= rect.top ||
+      e.clientY >= rect.bottom
+    ) {
+      setIsDragging(false);
+    }
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+    
+    const files = e.dataTransfer.files;
+    if (files && files.length > 0) {
+      handleFileDrop(files);
+    }
   };
 
   const removeImage = async (index) => {
@@ -266,7 +349,50 @@ const ArticleEditor = ({
           <Typography variant="subtitle1" gutterBottom sx={{ color: 'var(--White)', fontWeight: 600 }}>
             Image Gallery
           </Typography>
-          <Paper sx={{ p: 2, backgroundColor: 'var(--Dark-Base)' }}>
+          <Paper 
+            sx={{ 
+              p: 2, 
+              backgroundColor: 'var(--Dark-Base)',
+              position: 'relative',
+              border: isDragging ? '2px dashed var(--Blue)' : '1px solid transparent',
+              transition: 'border 0.2s ease'
+            }}
+            onDragOver={handleDragOver}
+            onDragEnter={handleDragEnter}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+          >
+            {/* Drag overlay */}
+            {isDragging && (
+              <Box
+                sx={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                  border: '2px dashed var(--Blue)',
+                  borderRadius: 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  zIndex: 10,
+                  pointerEvents: 'none'
+                }}
+              >
+                <Box textAlign="center">
+                  <UploadIcon sx={{ fontSize: 60, color: 'var(--Blue)', mb: 2 }} />
+                  <Typography variant="h6" sx={{ color: 'var(--Blue)' }}>
+                    Drop files here to upload
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: 'var(--Gray)' }}>
+                    PNG, JPG, JPEG, GIF, WebP, SVG, MP4
+                  </Typography>
+                </Box>
+              </Box>
+            )}
+            
             <Box display="flex" alignItems="center" gap={2} mb={2} pb={2} borderBottom="1px solid var(--Border)">
               <input
                 type="file"
@@ -286,7 +412,7 @@ const ArticleEditor = ({
                 {uploadingImages ? 'Uploading...' : 'Upload Images'}
               </Button>
               <Typography variant="caption" sx={{ color: 'var(--Gray)' }}>
-                Accepts: PNG, JPG, JPEG, GIF, WebP, SVG, MP4
+                Drag & drop files here or click to browse
               </Typography>
             </Box>
 
@@ -358,10 +484,28 @@ const ArticleEditor = ({
                 ))}
               </ImageList>
             ) : (
-              <Box py={4} textAlign="center">
+              <Box 
+                py={8} 
+                textAlign="center"
+                sx={{
+                  border: '2px dashed var(--Border)',
+                  borderRadius: 1,
+                  backgroundColor: 'rgba(255, 255, 255, 0.02)',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  '&:hover': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.04)',
+                    borderColor: 'var(--Gray)'
+                  }
+                }}
+                onClick={() => imageUploadRef.current?.click()}
+              >
                 <ImageIcon sx={{ fontSize: 60, color: 'var(--Gray)', mb: 1 }} />
-                <Typography variant="body2" color="text.secondary">
-                  No images in gallery. Upload images to add them.
+                <Typography variant="body1" sx={{ color: 'var(--White)', mb: 1 }}>
+                  Drop images here or click to upload
+                </Typography>
+                <Typography variant="caption" sx={{ color: 'var(--Gray)' }}>
+                  Supports PNG, JPG, JPEG, GIF, WebP, SVG, MP4
                 </Typography>
               </Box>
             )}
