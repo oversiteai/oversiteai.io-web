@@ -1668,6 +1668,11 @@ main {
   will-change: transform;
 }
 
+.solutions-page {
+  min-width: 100%;
+  flex-shrink: 0;
+}
+
 .solutions-page-wrapper {
   min-width: 100%;
   flex-shrink: 0;
