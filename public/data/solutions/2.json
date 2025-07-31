@@ -5,8 +5,7 @@
   "teaser": "Integrate directly with Bluetooth-enabled flow meters for accurate volume readings at pickup and disposal points.",
   "image": "/oversiteai.io-web/images/bluetooth.png",
   "images": [
-    "/oversiteai.io-web/images/bluetooth.png",
-    "/oversiteai.io-web/images/flow_meter.jpg"
+    "/oversiteai.io-web/images/bluetooth.png"
   ],
   "body": "<h2>Seamless Integration with Modern Flow Meters</h2><p>By integrating directly with Bluetooth-enabled flow meters, our app captures accurate volume readings at both pickup and disposal points. This eliminates manual data entry errors and ensures real-time data synchronization.</p><h3>Technical Capabilities</h3><ul><li><strong>Universal Compatibility:</strong> Works with all major flow meter brands and models</li><li><strong>Automatic Calibration:</strong> Self-adjusting algorithms ensure accuracy across different meter types</li><li><strong>Offline Functionality:</strong> Data cached locally and synced when connection restored</li><li><strong>Multi-meter Support:</strong> Connect to multiple meters simultaneously for complex operations</li></ul><h3>Operational Impact</h3><p>Field operators report a 70% reduction in data entry time and complete elimination of transcription errors. The system has processed over 10 million gallons of fluid transfers with 99.9% accuracy, setting new industry standards for data reliability.</p>",
   "tags": [
