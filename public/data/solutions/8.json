@@ -3,10 +3,10 @@
   "title": "Environmental Compliance Suite",
   "subtitle": "Automated monitoring and reporting for all environmental regulations and permits.",
   "teaser": "Navigate environmental regulations with automated monitoring, documentation, and reporting for all major frameworks.",
-  "image": "/oversiteai.io-web/images/automated_uic.png",
+  "image": "images/automated_uic.png",
   "images": [
-    "/oversiteai.io-web/images/automated_uic.png",
-    "/oversiteai.io-web/images/documentation.jpg"
+    "images/automated_uic.png",
+    "images/documentation.jpg"
   ],
   "body": "<h2>Stay Compliant, Stay Protected</h2><p>Navigate the complex landscape of environmental regulations with confidence. Our Environmental Compliance Suite automates monitoring, documentation, and reporting for all major regulatory frameworks.</p><h3>Comprehensive Coverage</h3><ul><li><strong>Air Quality Monitoring</strong> - Continuous emissions tracking with automatic EPA reporting</li><li><strong>Water Management</strong> - Track discharge quality and volumes against permit limits</li><li><strong>Waste Tracking</strong> - Complete cradle-to-grave documentation for all waste streams</li><li><strong>Spill Response</strong> - Instant detection and automated reporting protocols</li></ul><h3>Regulatory Intelligence</h3><p>Our system stays updated with the latest regulatory changes and automatically adjusts monitoring and reporting requirements. Never miss a deadline or filing requirement again.</p><h3>Audit Ready</h3><p>All data is stored with complete chain of custody documentation, making regulatory audits quick and painless. Generate comprehensive compliance reports with a single click.</p>",
   "tags": [
@@ -16,5 +16,5 @@
     "EPA",
     "Monitoring"
   ],
-  "featured": false
+  "featured": true
 }

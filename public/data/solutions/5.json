@@ -3,13 +3,13 @@
   "title": "Digital Chain of Custody",
   "subtitle": "Immutable Audit Trail for Complete Accountability",
   "teaser": "Immutable audit logs record every step from fluid origin to disposal, tracking who handled it, when, where, and how.",
-  "image": "/oversiteai.io-web/images/digital_custody_chain.png",
-  "video": "/oversiteai.io-web/videos/digital_chain_of_custody.mp4",
+  "image": "images/digital_custody_chain.png",
+  "video": "videos/digital_chain_of_custody.mp4",
   "images": [
-    "/oversiteai.io-web/images/digital_custody_chain.png",
-    "/oversiteai.io-web/images/automated_uic.png",
-    "/oversiteai.io-web/images/digital_custody_chain_2.png",
-    "/oversiteai.io-web/images/digital_custody_chain_3.png"
+    "images/digital_custody_chain.png",
+    "images/automated_uic.png",
+    "images/digital_custody_chain_2.png",
+    "images/digital_custody_chain_3.png"
   ],
   "body": "<h2>Complete Transparency from Origin to Disposal</h2><p>Immutable audit logs record every step in the transportation and disposal chain — from fluid origin to well injection — including who handled it, when, where, and how. This comprehensive tracking ensures complete accountability and legal protection.</p><h3>Chain of Custody Features</h3><ul><li><strong>Blockchain Technology:</strong> Tamper-proof records ensure data integrity</li><li><strong>Multi-party Verification:</strong> Each handoff requires digital confirmation from all parties</li><li><strong>Timestamp Accuracy:</strong> Microsecond precision for legal defensibility</li><li><strong>Media Attachments:</strong> Photos, videos, and documents linked to each custody point</li></ul><h3>Legal and Operational Benefits</h3><p>The digital chain of custody has proven invaluable in legal proceedings, with our records accepted as evidence in over 50 cases. The system has helped operators avoid liability in contested disposal claims and provided irrefutable proof of proper handling procedures.</p><h3>Integration Capabilities</h3><p>Our chain of custody system integrates with existing ERP systems, accounting software, and regulatory reporting platforms, creating a seamless flow of verified data across all business operations.</p>",
   "tags": [
@@ -18,6 +18,6 @@
     "Blockchain",
     "Legal Compliance"
   ],
-  "primaryImage": "/oversiteai.io-web/images/digital_custody_chain.png",
+  "primaryImage": "images/digital_custody_chain.png",
   "featured": false
 }

@@ -3,9 +3,10 @@
   "title": "Geofencing and GPS Precision",
   "subtitle": "Advanced Location Tracking for Energy Operations",
   "teaser": "Every driver route, site visit, and fluid transfer is geotagged and timestamped using high-accuracy GPS.",
-  "image": "/oversiteai.io-web/images/geofence.png",
+  "image": "images/geofence.png",
   "images": [
-    "/oversiteai.io-web/images/geofence.png"
+    "images/geofence.png",
+    "data/solutions/1/7badfabc-74af-45db-b376-bc598743dd00-2-1753980767147.jpg"
   ],
   "body": "<h2>Revolutionizing Field Operations with GPS Technology</h2><p>Every driver route, site visit, and fluid transfer is geotagged and timestamped using high-accuracy GPS. This <a href=\"https://www.google.com\">comprehensive</a> tracking system ensures complete accountability and transparency throughout the entire operational chain.</p><h3>Key Features</h3><ul><li><strong>Real-time Tracking:</strong> Monitor field operations as they happen with sub-meter accuracy</li><li><strong>Automated Geofencing:</strong> Set virtual boundaries around critical sites and receive instant alerts</li><li><strong>Route Optimization:</strong> AI-powered&nbsp;route planning reduces fuel costs and travel time<br></li><li><strong>Compliance Documentation:</strong> Automatic generation of location-based compliance reports</li></ul><h3>Benefits</h3><p>Our GPS precision technology has helped operators reduce unauthorized site visits by 95% while improving overall operational efficiency by 40%. The system integrates seamlessly with existing fleet management tools and provides comprehensive analytics for continuous improvement.</p>",
   "tags": [
@@ -14,6 +15,6 @@
     "Field Operations",
     "Compliance"
   ],
-  "primaryImage": "/oversiteai.io-web/images/geofence.png",
-  "featured": false
+  "primaryImage": "images/geofence.png",
+  "featured": true
 }
