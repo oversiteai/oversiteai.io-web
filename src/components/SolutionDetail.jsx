@@ -27,7 +27,7 @@ function SolutionDetail() {
     const fetchSolution = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`/oversiteai.io-web/data/solutions/${id}.json`);
+        const response = await fetch(`data/solutions/${id}.json`);
         if (!response.ok) {
           throw new Error('Solution not found');
         }

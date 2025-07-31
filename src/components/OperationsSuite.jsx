@@ -69,49 +69,49 @@ const OperationsSuite = () => {
   const fallbackSolutions = [
     {
       id: 1,
-      image: "/oversiteai.io-web/images/geofence.png",
+      image: "images/geofence.png",
       title: "Geofencing and GPS Precision",
       description: "Every driver route, site visit, and fluid transfer is geotagged and timestamped using high-accuracy GPS."
     },
     {
       id: 2,
-      image: "/oversiteai.io-web/images/bluetooth.png",
+      image: "images/bluetooth.png",
       title: "Bluetooth Flow Meter Automation",
       description: "Integrate directly with Bluetooth-enabled flow meters for accurate volume readings at pickup and disposal points."
     },
     {
       id: 3,
-      image: "/oversiteai.io-web/images/realtime.png",
+      image: "images/realtime.png",
       title: "Real-Time Well Verification",
       description: "Cross-reference injection sites against permitted wells database for instant verification before fluid disposal."
     },
     {
       id: 4,
-      image: "/oversiteai.io-web/images/automated_uic.png",
+      image: "images/automated_uic.png",
       title: "Automated UIC Generation",
       description: "Generate UIC documentation automatically by combining flow data, GPS tracks, operator ID, and digital signatures."
     },
     {
       id: 5,
-      image: "/oversiteai.io-web/images/digital_custody_chain.png",
+      image: "images/digital_custody_chain.png",
       title: "Digital Chain of Custody",
       description: "Immutable audit logs record every step from fluid origin to disposal, tracking who handled it, when, where, and how."
     },
     {
       id: 6,
-      image: "/oversiteai.io-web/images/inventory1.jpg",
+      image: "images/inventory1.jpg",
       title: "Smart Inventory Management",
       description: "Track every piece of equipment and material in real-time with RFID integration and predictive restocking."
     },
     {
       id: 7,
-      image: "/oversiteai.io-web/images/maintenance1.jpg",
+      image: "images/maintenance1.jpg",
       title: "Predictive Maintenance Analytics",
       description: "Machine learning analyzes equipment data to predict failures and optimize maintenance schedules proactively."
     },
     {
       id: 8,
-      image: "/oversiteai.io-web/images/compliance1.jpg",
+      image: "images/compliance1.jpg",
       title: "Environmental Compliance Suite",
       description: "Navigate environmental regulations with automated monitoring, documentation, and reporting for all major frameworks."
     }
@@ -126,7 +126,7 @@ const OperationsSuite = () => {
       // Try to load solutions until we get 2 consecutive 404s
       while (consecutiveFailures < 2) {
         try {
-          const response = await fetch(`/oversiteai.io-web/data/solutions/${id}.json`);
+          const response = await fetch(`data/solutions/${id}.json`);
           if (response.ok) {
             const data = await response.json();
             
@@ -136,7 +136,7 @@ const OperationsSuite = () => {
               id: data.id || id,
               title: data.title || fallbackSolutions[id - 1]?.title || `Solution ${id}`,
               description: data.teaser || data.subtitle || fallbackSolutions[id - 1]?.description || '',
-              image: data.primaryImage || data.image || fallbackSolutions[id - 1]?.image || `/oversiteai.io-web/images/solution${id}.png`,
+              image: data.primaryImage || data.image || fallbackSolutions[id - 1]?.image || `images/solution${id}.png`,
               featured: data.featured || false
             };
             loadedSolutions.push(solutionData);

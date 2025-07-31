@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   Box,
   Button,
@@ -12,7 +12,8 @@ import {
   Chip,
   Divider,
   FormControlLabel,
-  Switch
+  Switch,
+  CircularProgress
 } from '@mui/material';
 import {
   Delete as DeleteIcon,
@@ -36,6 +37,7 @@ const ArticleEditor = ({
 }) => {
   const editorRef = useRef(null);
   const imageUploadRef = useRef(null);
+  const [uploadingImages, setUploadingImages] = useState(false);
 
   const getSingularType = (type) => {
     const typeMap = {
@@ -58,19 +60,66 @@ const ArticleEditor = ({
     const files = Array.from(event.target.files);
     if (files.length === 0) return;
 
-    // For now, we'll just add the file paths as placeholders
-    // In a real implementation, these would be uploaded to a server
-    const newImages = files.map(file => URL.createObjectURL(file));
-    onFieldChange('images', [...(article.images || []), ...newImages]);
+    setUploadingImages(true);
+    try {
+      const uploadedImages = [];
+      
+      for (const file of files) {
+        const formData = new FormData();
+        formData.append('image', file);
+        
+        const response = await fetch(`http://localhost:3001/api/${articleType}/${article.id}/upload`, {
+          method: 'POST',
+          body: formData
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          uploadedImages.push(data.url);
+        } else {
+          console.error('Failed to upload image:', file.name);
+          const error = await response.json();
+          console.error('Error:', error.error);
+        }
+      }
+      
+      if (uploadedImages.length > 0) {
+        onFieldChange('images', [...(article.images || []), ...uploadedImages]);
+      }
+    } catch (error) {
+      console.error('Error uploading images:', error);
+      alert('Failed to upload images. Please try again.');
+    } finally {
+      setUploadingImages(false);
+    }
+    
+    // Reset the input to allow uploading the same file again
+    event.target.value = '';
   };
 
-  const removeImage = (index) => {
+  const removeImage = async (index) => {
+    const imageToRemove = article.images[index];
     const updatedImages = article.images.filter((_, i) => i !== index);
     onFieldChange('images', updatedImages);
     
     // If we're removing the primary image, clear it
-    if (article.primaryImage === article.images[index]) {
+    if (article.primaryImage === imageToRemove) {
       onFieldChange('primaryImage', '');
+    }
+    
+    // Delete the image from the server
+    try {
+      // Extract the filename from the URL
+      const filename = imageToRemove.split('/').pop();
+      const response = await fetch(`http://localhost:3001/api/${articleType}/${article.id}/images/${filename}`, {
+        method: 'DELETE'
+      });
+      
+      if (!response.ok) {
+        console.error('Failed to delete image from server');
+      }
+    } catch (error) {
+      console.error('Error deleting image:', error);
     }
   };
 
@@ -177,7 +226,7 @@ const ArticleEditor = ({
             {article.primaryImage ? (
               <Box
                 component="img"
-                src={article.primaryImage}
+                src={article.primaryImage.startsWith('blob:') ? article.primaryImage : `/oversiteai.io-web/${article.primaryImage}`}
                 alt="Primary"
                 sx={{ 
                   width: '240px',
@@ -221,7 +270,7 @@ const ArticleEditor = ({
             <Box display="flex" alignItems="center" gap={2} mb={2} pb={2} borderBottom="1px solid var(--Border)">
               <input
                 type="file"
-                accept="image/png,image/jpg,image/jpeg,image/gif"
+                accept="image/png,image/jpg,image/jpeg,image/gif,image/webp,image/svg+xml,video/mp4"
                 onChange={handleImageUpload}
                 style={{ display: 'none' }}
                 ref={imageUploadRef}
@@ -229,14 +278,15 @@ const ArticleEditor = ({
               />
               <Button
                 variant="contained"
-                startIcon={<UploadIcon />}
+                startIcon={uploadingImages ? <CircularProgress size={20} color="inherit" /> : <UploadIcon />}
                 onClick={() => imageUploadRef.current?.click()}
                 color="primary"
+                disabled={uploadingImages}
               >
-                Upload Images
+                {uploadingImages ? 'Uploading...' : 'Upload Images'}
               </Button>
               <Typography variant="caption" sx={{ color: 'var(--Gray)' }}>
-                Accepts: PNG, JPG, JPEG, GIF
+                Accepts: PNG, JPG, JPEG, GIF, WebP, SVG, MP4
               </Typography>
             </Box>
 
@@ -255,8 +305,8 @@ const ArticleEditor = ({
                     }}
                     onClick={() => onFieldChange('primaryImage', image)}
                   >
-                    <img
-                      src={image}
+                        <img
+                      src={image.startsWith('blob:') ? image : `/oversiteai.io-web/${image}`}
                       alt={`Gallery ${index + 1}`}
                       loading="lazy"
                       style={{ width: '100%', height: '100%', objectFit: 'cover' }}

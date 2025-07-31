@@ -22,11 +22,50 @@ app.use((req, res, next) => {
   next();
 });
 
+// Sanitize filename to remove special characters and spaces
+const sanitizeFilename = (filename) => {
+  // Get the file extension
+  const ext = path.extname(filename).toLowerCase();
+  // Get the filename without extension
+  let name = path.basename(filename, ext);
+  
+  // Convert to lowercase for consistency
+  name = name.toLowerCase();
+  
+  // Replace spaces and underscores with hyphens
+  name = name.replace(/[\s_]+/g, '-');
+  
+  // Remove any non-alphanumeric characters except hyphens
+  name = name.replace(/[^a-z0-9\-]/g, '');
+  
+  // Remove multiple consecutive hyphens
+  name = name.replace(/-+/g, '-');
+  
+  // Remove leading and trailing hyphens
+  name = name.replace(/^-+|-+$/g, '');
+  
+  // Limit filename length to 100 characters
+  if (name.length > 100) {
+    name = name.substring(0, 100);
+  }
+  
+  // If the name is empty after sanitization, use a timestamp
+  if (!name) {
+    name = `image-${Date.now()}`;
+  }
+  
+  // Add a timestamp suffix to ensure uniqueness
+  const timestamp = Date.now();
+  const uniqueName = `${name}-${timestamp}`;
+  
+  return uniqueName + ext;
+};
+
 // Configure multer for file uploads
 const storage = multer.diskStorage({
   destination: async (req, file, cb) => {
-    const solutionId = req.params.id;
-    const uploadDir = path.join(__dirname, `../public/data/solutions/${solutionId}`);
+    const { contentType, id } = req.params;
+    const uploadDir = path.join(__dirname, `../public/data/${contentType}/${id}`);
     
     // Create directory if it doesn't exist
     try {
@@ -37,124 +76,70 @@ const storage = multer.diskStorage({
     }
   },
   filename: (req, file, cb) => {
-    // Keep original filename
-    cb(null, file.originalname);
+    // Sanitize the filename
+    const sanitizedFilename = sanitizeFilename(file.originalname);
+    cb(null, sanitizedFilename);
   }
 });
 
 const upload = multer({ 
   storage,
+  limits: {
+    fileSize: 100 * 1024 * 1024 // 100MB max file size (for video files)
+  },
   fileFilter: (req, file, cb) => {
-    // Only allow image files
-    const allowedTypes = /jpeg|jpg|png|gif|webp/;
+    // Allow image and video files
+    const allowedTypes = /jpeg|jpg|png|gif|webp|svg|mp4/;
     const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-    const mimetype = allowedTypes.test(file.mimetype);
+    const mimetype = allowedTypes.test(file.mimetype) || file.mimetype === 'video/mp4';
     
     if (mimetype && extname) {
       return cb(null, true);
     } else {
-      cb(new Error('Only image files are allowed'));
+      cb(new Error('Only image and video files are allowed (jpg, jpeg, png, gif, webp, svg, mp4)'));
     }
   }
 });
 
-// Get all solutions
-app.get('/api/solutions', async (req, res) => {
-  try {
-    const solutionsDir = path.join(__dirname, '../public/data/solutions');
-    const files = await fs.readdir(solutionsDir);
-    const solutions = [];
 
-    for (const file of files) {
-      if (file.endsWith('.json')) {
-        const content = await fs.readFile(path.join(solutionsDir, file), 'utf-8');
-        solutions.push(JSON.parse(content));
-      }
-    }
 
-    solutions.sort((a, b) => a.id - b.id);
-    res.json(solutions);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
 
-// Create a new solution
-app.post('/api/solutions', async (req, res) => {
-  try {
-    const solutionData = req.body;
-    const { id } = solutionData;
-    
-    // Check if solution already exists
-    const filePath = path.join(__dirname, `../public/data/solutions/${id}.json`);
-    try {
-      await fs.access(filePath);
-      return res.status(409).json({ error: 'Solution already exists' });
-    } catch {
-      // File doesn't exist, we can create it
-    }
-    
-    // Create the JSON file
-    await fs.writeFile(filePath, JSON.stringify(solutionData, null, 2));
-    
-    // Create directory for images if it doesn't exist
-    const imageDir = path.join(__dirname, `../public/data/solutions/${id}`);
-    await fs.mkdir(imageDir, { recursive: true });
-    
-    res.json({ success: true, message: 'Solution created successfully', solution: solutionData });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
 
-// Save a solution
-app.put('/api/solutions/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const solutionData = req.body;
-    
-    // Ensure the ID matches
-    solutionData.id = parseInt(id);
-    
-    const filePath = path.join(__dirname, `../public/data/solutions/${id}.json`);
-    await fs.writeFile(filePath, JSON.stringify(solutionData, null, 2));
-    
-    res.json({ success: true, message: 'Solution saved successfully' });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Upload image for a solution
-app.post('/api/solutions/:id/upload', upload.single('image'), async (req, res) => {
+// Generic upload endpoint for all content types
+app.post('/api/:contentType/:id/upload', upload.single('image'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'No file uploaded' });
     }
     
-    const imageUrl = `/oversiteai.io-web/data/solutions/${req.params.id}/${req.file.filename}`;
+    const { contentType, id } = req.params;
+    const imageUrl = `data/${contentType}/${id}/${req.file.filename}`;
+    
     res.json({ 
       success: true, 
       url: imageUrl,
-      filename: req.file.filename 
+      filename: req.file.filename,
+      originalName: req.file.originalname,
+      sanitizedName: req.file.filename
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-// Get images for a solution
-app.get('/api/solutions/:id/images', async (req, res) => {
+// Get images for any content type
+app.get('/api/:contentType/:id/images', async (req, res) => {
   try {
-    const solutionDir = path.join(__dirname, `../public/data/solutions/${req.params.id}`);
+    const { contentType, id } = req.params;
+    const contentDir = path.join(__dirname, `../public/data/${contentType}/${id}`);
     
     try {
-      const files = await fs.readdir(solutionDir);
+      const files = await fs.readdir(contentDir);
       const images = files
         .filter(file => /\.(jpg|jpeg|png|gif|webp)$/i.test(file))
         .map(filename => ({
           filename,
-          url: `/oversiteai.io-web/data/solutions/${req.params.id}/${filename}`
+          url: `data/${contentType}/${id}/${filename}`
         }));
       
       res.json(images);
@@ -167,19 +152,11 @@ app.get('/api/solutions/:id/images', async (req, res) => {
   }
 });
 
-// Delete a single image from a solution
-app.delete('/api/solutions/:id/delete-image', async (req, res) => {
+// Delete a single image from any content type
+app.delete('/api/:contentType/:id/images/:filename', async (req, res) => {
   try {
-    const { id } = req.params;
-    const { imageUrl } = req.body;
-    
-    if (!imageUrl) {
-      return res.status(400).json({ error: 'No image URL provided' });
-    }
-    
-    // Extract filename from URL
-    const filename = imageUrl.split('/').pop();
-    const imagePath = path.join(__dirname, `../public/data/solutions/${id}/${filename}`);
+    const { contentType, id, filename } = req.params;
+    const imagePath = path.join(__dirname, `../public/data/${contentType}/${id}/${filename}`);
     
     // Delete the file
     try {
@@ -198,24 +175,6 @@ app.delete('/api/solutions/:id/delete-image', async (req, res) => {
   }
 });
 
-// Delete a solution (including its directory)
-app.delete('/api/solutions/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    
-    // Delete JSON file
-    const jsonPath = path.join(__dirname, `../public/data/solutions/${id}.json`);
-    await fs.unlink(jsonPath).catch(() => {}); // Ignore if doesn't exist
-    
-    // Delete directory and all its contents
-    const dirPath = path.join(__dirname, `../public/data/solutions/${id}`);
-    await fs.rm(dirPath, { recursive: true, force: true }).catch(() => {});
-    
-    res.json({ success: true, message: 'Solution deleted successfully' });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
 
 // Generic articles endpoints that work for all content types
 // Get all articles of a specific type

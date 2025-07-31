@@ -18,7 +18,7 @@ const FeaturedSection = () => {
       try {
         // For now, load the first featured item
         // Later this can be dynamic based on rotation logic
-        const response = await fetch('/oversiteai.io-web/data/featured/1.json');
+        const response = await fetch('data/featured/1.json');
         if (response.ok) {
           const data = await response.json();
           setFeaturedData(data);

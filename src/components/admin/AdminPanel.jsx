@@ -169,7 +169,7 @@ function AdminPanelContent() {
         const maxItems = currentType === 'featured' ? 5 : 20;
         for (let i = 1; i <= maxItems; i++) {
           try {
-            const response = await fetch(`/oversiteai.io-web/data/${currentType}/${i}.json`);
+            const response = await fetch(`data/${currentType}/${i}.json`);
             if (response.ok) {
               const data = await response.json();
               loadedArticles.push(data);

@@ -61,7 +61,7 @@ const LookingAheadSection = () => {
                 playsInline
                 className="background-video"
               >
-                <source src="/oversiteai.io-web/video/looking_ahead.mp4" type="video/mp4" />
+                <source src="video/looking_ahead.mp4" type="video/mp4" />
               </video>
             </div>
             <div className="gradient-overlay"></div>

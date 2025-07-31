@@ -191,27 +191,6 @@
   color: var(--Text);
 }
 
-/* .solution-detail-body ul {
-  list-style: none;
-  padding: 0;
-  margin: 16px 0;
-}
-
-.solution-detail-body ul li {
-  position: relative;
-  padding-left: 1.8vw;
-  margin-bottom: 0.8vw;
-  color: var(--Text);
-}
-
-.solution-detail-body ul li::before {
-  content: '▸';
-  position: absolute;
-  left: 0;
-  color: var(--Green);
-  font-size: 1.2vw;
-} */
-
 .solution-detail-body strong {
   color: var(--White);
   font-weight: 600;
