@@ -8,9 +8,9 @@ const MetricsSection = () => {
           <path className="icon-metric" d="M8.16504 11.7361C8.16504 13.1624 9.33754 14.3174 10.79 14.3174C12.2425 14.3174 13.415 13.1624 13.415 11.7361C13.415 10.5899 12.9513 10.2574 10.79 7.75488C8.60254 10.2749 8.16504 10.5986 8.16504 11.7361ZM17.79 11.6924C18.2713 11.6924 18.665 11.2986 18.665 10.8174C18.665 10.3361 18.2713 9.94238 17.79 9.94238H16.915V4.69238H17.79C18.2713 4.69238 18.665 4.29863 18.665 3.81738C18.665 3.33613 18.2713 2.94238 17.79 2.94238H3.79004C3.30879 2.94238 2.91504 3.33613 2.91504 3.81738C2.91504 4.29863 3.30879 4.69238 3.79004 4.69238H4.66504V9.94238H3.79004C3.30879 9.94238 2.91504 10.3361 2.91504 10.8174C2.91504 11.2986 3.30879 11.6924 3.79004 11.6924H4.66504V16.9424H3.79004C3.30879 16.9424 2.91504 17.3361 2.91504 17.8174C2.91504 18.2986 3.30879 18.6924 3.79004 18.6924H17.79C18.2713 18.6924 18.665 18.2986 18.665 17.8174C18.665 17.3361 18.2713 16.9424 17.79 16.9424H16.915V11.6924H17.79ZM15.165 16.9424H6.41504V11.6924C6.89629 11.6924 7.29004 11.2986 7.29004 10.8174C7.29004 10.3361 6.89629 9.94238 6.41504 9.94238V4.69238H15.165V9.94238C14.6838 9.94238 14.29 10.3361 14.29 10.8174C14.29 11.2986 14.6838 11.6924 15.165 11.6924V16.9424Z"/>
         </svg>
       ),
-      number: "1.4M",
-      label: "barrels tracked",
-      description: "Accurately logged with GPS-stamped records across multiple disposal and production sites."
+      number: "1ms",
+      label: "Alert Speed",
+      description: "Real-time detection powered by edge AI and event-driven telemetry.."
     },
     {
       icon: (
@@ -20,7 +20,7 @@ const MetricsSection = () => {
       ),
       number: "15,000+",
       label: "field tickets auto-filled",
-      description: "Automatically generated with location, time, and volume data—no manual entry needed."
+      description: "Automatically generate with location, time, and volume data—no manual entry needed."
     },
     {
       icon: (
