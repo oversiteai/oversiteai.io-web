@@ -11,7 +11,7 @@ function SolutionDetail() {
   const [solution, setSolution] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [primaryImageValid, setPrimaryImageValid] = useState(false);
+  const [detailImageValid, setDetailImageValid] = useState(false);
   const isDevMode = import.meta.env.DEV;
 
   useEffect(() => {
@@ -33,13 +33,13 @@ function SolutionDetail() {
         const data = await response.json();
         setSolution(data);
         
-        // Check if primary image is valid
-        if (data.primaryImage) {
+        // Check if detail image is valid
+        if (data.detailImage) {
           try {
-            const imgResponse = await fetch(data.primaryImage, { method: 'HEAD' });
-            setPrimaryImageValid(imgResponse.ok);
+            const imgResponse = await fetch(data.detailImage, { method: 'HEAD' });
+            setDetailImageValid(imgResponse.ok);
           } catch {
-            setPrimaryImageValid(false);
+            setDetailImageValid(false);
           }
         }
       } catch (err) {
@@ -102,10 +102,10 @@ function SolutionDetail() {
             <p className="solution-detail-subtitle">{solution.subtitle}</p>
           </div>
           
-          {primaryImageValid && solution.primaryImage && (
+          {detailImageValid && solution.detailImage && (
             <div className="solution-detail-images">
               <img 
-                src={solution.primaryImage} 
+                src={solution.detailImage} 
                 alt={solution.title}
                 className="solution-detail-image"
                 onError={(e) => {

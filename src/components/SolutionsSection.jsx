@@ -37,7 +37,7 @@ const SolutionsSection = () => {
                 id: data.id || id,
                 title: data.title || `Solution ${id}`,
                 description: data.teaser || data.subtitle || '',
-                image: data.primaryImage || data.image || `images/solution${id}.png`
+                image: data.cardImage || `images/solution${id}.png`
               };
               loadedSolutions.push(solutionData);
             }

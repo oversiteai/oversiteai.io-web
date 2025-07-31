@@ -39,6 +39,7 @@ const ArticleEditor = ({
   const imageUploadRef = useRef(null);
   const [uploadingImages, setUploadingImages] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [hoveredGallery, setHoveredGallery] = useState(false);
 
   const getSingularType = (type) => {
     const typeMap = {
@@ -185,9 +186,12 @@ const ArticleEditor = ({
     const updatedImages = article.images.filter((_, i) => i !== index);
     onFieldChange('images', updatedImages);
     
-    // If we're removing the primary image, clear it
-    if (article.primaryImage === imageToRemove) {
-      onFieldChange('primaryImage', '');
+    // If we're removing the card or detail image, clear it
+    if (article.cardImage === imageToRemove) {
+      onFieldChange('cardImage', '');
+    }
+    if (article.detailImage === imageToRemove) {
+      onFieldChange('detailImage', '');
     }
     
     // Delete the image from the server
@@ -301,53 +305,13 @@ const ArticleEditor = ({
           }}
         />
 
-        <Box>
-          <Typography variant="subtitle1" gutterBottom sx={{ color: 'var(--White)', fontWeight: 600 }}>
-            Primary Image (for card)
-          </Typography>
-          <Paper sx={{ p: 2, backgroundColor: 'var(--Dark-Base)' }}>
-            {article.primaryImage ? (
-              <Box
-                component="img"
-                src={article.primaryImage.startsWith('blob:') ? article.primaryImage : `/oversiteai.io-web/${article.primaryImage}`}
-                alt="Primary"
-                sx={{ 
-                  width: '240px',
-                  height: '160px',
-                  objectFit: 'cover',
-                  borderRadius: 1,
-                  border: '1px solid var(--Border)'
-                }}
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src = 'data:image/svg+xml,%3Csvg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="200" height="200" fill="%23222"%3E%3C/rect%3E%3Cpath d="M75 65L125 65L140 95L140 125L60 125L60 95L75 65Z" stroke="%23444" stroke-width="3" fill="none"%3E%3C/path%3E%3Cpath d="M90 85C90 90.5228 85.5228 95 80 95C74.4772 95 70 90.5228 70 85C70 79.4772 74.4772 75 80 75C85.5228 75 90 79.4772 90 85Z" fill="%23444"%3E%3C/path%3E%3Cpath d="M60 125L80 100L100 115L120 95L140 125" stroke="%23444" stroke-width="3" fill="none"%3E%3C/path%3E%3Cpath d="M50 50L150 150M150 50L50 150" stroke="%23ff3d66" stroke-width="4"%3E%3C/path%3E%3C/svg%3E';
-                }}
-              />
-            ) : (
-              <Box
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-                sx={{ 
-                  width: '240px',
-                  height: '160px',
-                  backgroundColor: 'var(--Dark-Secondary)',
-                  borderRadius: 1,
-                  border: '1px solid var(--Border)'
-                }}
-              >
-                <BrokenImageIcon sx={{ fontSize: 60, color: 'var(--Gray)' }} />
-              </Box>
-            )}
-            <Typography variant="caption" display="block" sx={{ mt: 1, color: 'var(--Gray)' }}>
-              Select an image from the gallery below to set as primary
-            </Typography>
-          </Paper>
-        </Box>
 
         <Box>
           <Typography variant="subtitle1" gutterBottom sx={{ color: 'var(--White)', fontWeight: 600 }}>
             Image Gallery
+          </Typography>
+          <Typography variant="caption" display="block" sx={{ mb: 1, color: 'var(--Gray)' }}>
+            Upload images and select which ones to use for card display and banner display
           </Typography>
           <Paper 
             sx={{ 
@@ -417,19 +381,21 @@ const ArticleEditor = ({
             </Box>
 
             {article.images && article.images.length > 0 ? (
-              <ImageList cols={4} gap={16}>
+              <ImageList 
+                cols={4} 
+                gap={16}
+                onMouseEnter={() => setHoveredGallery(true)}
+                onMouseLeave={() => setHoveredGallery(false)}
+              >
                 {article.images.map((image, index) => (
                   <ImageListItem 
                     key={index}
                     sx={{ 
-                      cursor: 'pointer',
                       position: 'relative',
-                      border: article.primaryImage === image ? '2px solid var(--Green)' : '1px solid var(--Border)',
+                      border: '1px solid var(--Border)',
                       borderRadius: 1,
-                      overflow: 'hidden',
-                      '&:hover .delete-overlay': { opacity: 1 }
+                      overflow: 'hidden'
                     }}
-                    onClick={() => onFieldChange('primaryImage', image)}
                   >
                         <img
                       src={image.startsWith('blob:') ? image : `/oversiteai.io-web/${image}`}
@@ -441,27 +407,71 @@ const ArticleEditor = ({
                         e.target.src = 'data:image/svg+xml,%3Csvg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="200" height="200" fill="%23222"%3E%3C/rect%3E%3Cpath d="M75 65L125 65L140 95L140 125L60 125L60 95L75 65Z" stroke="%23444" stroke-width="3" fill="none"%3E%3C/path%3E%3Cpath d="M90 85C90 90.5228 85.5228 95 80 95C74.4772 95 70 90.5228 70 85C70 79.4772 74.4772 75 80 75C85.5228 75 90 79.4772 90 85Z" fill="%23444"%3E%3C/path%3E%3Cpath d="M60 125L80 100L100 115L120 95L140 125" stroke="%23444" stroke-width="3" fill="none"%3E%3C/path%3E%3Cpath d="M50 50L150 150M150 50L50 150" stroke="%23ff3d66" stroke-width="4"%3E%3C/path%3E%3C/svg%3E';
                       }}
                     />
-                    {article.primaryImage === image && (
-                      <Chip
-                        label="Primary"
-                        size="small"
-                        sx={{
-                          position: 'absolute',
-                          top: 8,
-                          left: 8,
-                          backgroundColor: 'success.main',
-                          color: 'success.contrastText',
-                          fontWeight: 600
-                        }}
-                      />
-                    )}
+                    {/* Card Badge - Always top-left */}
+                    <Chip
+                      label="Card"
+                      size="small"
+                      variant="outlined"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onFieldChange('cardImage', article.cardImage === image ? '' : image);
+                      }}
+                      sx={{
+                        position: 'absolute',
+                        top: 8,
+                        left: 8,
+                        backgroundColor: article.cardImage === image ? 'var(--Blue)' : 'transparent',
+                        border: article.cardImage === image ? '2px solid var(--Blue)' : '1px solid var(--Blue)',
+                        color: article.cardImage === image ? 'white' : 'var(--Blue)',
+                        fontWeight: 600,
+                        display: hoveredGallery || article.cardImage === image ? 'flex' : 'none',
+                        cursor: 'pointer',
+                        zIndex: 2,
+                        transition: 'all 0.2s ease',
+                        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
+                        '&:hover': {
+                          backgroundColor: article.cardImage === image ? 'var(--Blue-Dark, #1976D2)' : 'rgba(43, 180, 198, 0.1)',
+                          transform: 'scale(1.05)',
+                          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.3)'
+                        }
+                      }}
+                    />
+                    {/* Banner Badge - Always top-right */}
+                    <Chip
+                      label="Banner"
+                      size="small"
+                      variant="outlined"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onFieldChange('detailImage', article.detailImage === image ? '' : image);
+                      }}
+                      sx={{
+                        position: 'absolute',
+                        top: 8,
+                        right: 48, // Adjusted to not overlap with delete button
+                        backgroundColor: article.detailImage === image ? 'var(--Blue)' : 'transparent',
+                        border: article.detailImage === image ? '2px solid var(--Blue)' : '1px solid var(--Blue)',
+                        color: article.detailImage === image ? 'white' : 'var(--Blue)',
+                        fontWeight: 600,
+                        display: hoveredGallery || article.detailImage === image ? 'flex' : 'none',
+                        cursor: 'pointer',
+                        zIndex: 2,
+                        transition: 'all 0.2s ease',
+                        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
+                        '&:hover': {
+                          backgroundColor: article.detailImage === image ? 'var(--Blue-Dark, #1976D2)' : 'rgba(43, 180, 198, 0.1)',
+                          transform: 'scale(1.05)',
+                          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.3)'
+                        }
+                      }}
+                    />
                     <Box
-                      className="delete-overlay"
                       sx={{
                         position: 'absolute',
                         top: 8,
                         right: 8,
-                        opacity: 0,
+                        zIndex: 3,
+                        opacity: hoveredGallery ? 1 : 0,
                         transition: 'opacity 0.3s'
                       }}
                     >
