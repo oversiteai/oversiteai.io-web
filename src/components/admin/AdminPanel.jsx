@@ -32,7 +32,9 @@ import {
   Typography,
   Stack,
   Container,
-  Alert
+  Alert,
+  AlertTitle,
+  IconButton
 } from '@mui/material';
 import {
   Delete as DeleteIcon,
@@ -42,7 +44,8 @@ import {
   CloudDownload as CloudDownloadIcon,
   Star as StarIcon,
   StarBorder as StarBorderIcon,
-  StarRate as StarRateIcon
+  StarRate as StarRateIcon,
+  Info as InfoIcon
 } from '@mui/icons-material';
 import { SnackbarProvider as ToastProvider, useSnackbar as useToast } from 'notistack';
 import adminTheme from '../../adminTheme';
@@ -71,6 +74,9 @@ function AdminPanelContent() {
   const [changesDialogOpen, setChangesDialogOpen] = useState(false);
   const [undoDialogOpen, setUndoDialogOpen] = useState(false);
   const [bulkUpdating, setBulkUpdating] = useState(false);
+  const [remoteUpdateCheck, setRemoteUpdateCheck] = useState(null);
+  const [conflictModalOpen, setConflictModalOpen] = useState(false);
+  const [conflictFiles, setConflictFiles] = useState([]);
 
   // If we have URL parameters, select the article after loading
   useEffect(() => {
@@ -100,6 +106,30 @@ function AdminPanelContent() {
     const interval = setInterval(checkGitStatus, 30000);
     return () => clearInterval(interval);
   }, []);
+
+  // Periodic remote update checking
+  useEffect(() => {
+    const checkRemoteUpdates = async () => {
+      try {
+        const response = await fetch('http://localhost:3001/api/git/check-conflicts');
+        const data = await response.json();
+        setRemoteUpdateCheck(data);
+        
+        // Auto-pull non-conflicting changes
+        if (data.canAutoPull) {
+          await pullChanges();
+        }
+      } catch (error) {
+        console.error('Failed to check remote updates:', error);
+      }
+    };
+    
+    // Check every 60 seconds
+    const interval = setInterval(checkRemoteUpdates, 60000);
+    checkRemoteUpdates(); // Initial check
+    
+    return () => clearInterval(interval);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const checkGitStatus = async () => {
     try {
@@ -522,6 +552,14 @@ function AdminPanelContent() {
         method: 'POST'
       });
 
+      if (response.status === 409) {
+        // Conflicts detected
+        const data = await response.json();
+        setConflictFiles(data.conflicts);
+        setConflictModalOpen(true);
+        return;
+      }
+
       if (response.ok) {
         showToast('Changes pulled successfully!', 'success');
         checkGitStatus();
@@ -532,6 +570,32 @@ function AdminPanelContent() {
       }
     } catch {
       showToast('Failed to pull changes. Make sure the API server is running.', 'error');
+    }
+  };
+
+  const forcePullChanges = async () => {
+    try {
+      const response = await fetch('http://localhost:3001/api/git/force-pull', {
+        method: 'POST'
+      });
+
+      if (response.ok) {
+        showToast('Remote changes accepted. Local changes were overwritten.', 'info');
+        setConflictModalOpen(false);
+        setConflictFiles([]);
+        checkGitStatus();
+        loadArticles();
+        
+        // Reset any current editing
+        setSelectedArticle(null);
+        setEditedArticle(null);
+        setOriginalArticle(null);
+      } else {
+        const error = await response.json();
+        showToast(`Failed to accept updates: ${error.message}`, 'error');
+      }
+    } catch {
+      showToast('Failed to accept updates. Make sure the API server is running.', 'error');
     }
   };
 
@@ -573,26 +637,40 @@ function AdminPanelContent() {
                     {gitLoading ? (
                       <CircularProgress size={20} />
                     ) : (
-                      <Typography 
-                        variant="body1" 
-                        sx={{ 
-                          color: gitStatus.changes && gitStatus.changes.length > 0 
-                            ? 'var(--Yellow)' 
-                            : 'var(--Text)',
-                          cursor: gitStatus.changes && gitStatus.changes.length > 0 ? 'pointer' : 'default',
-                          fontWeight: gitStatus.changes && gitStatus.changes.length > 0 ? 600 : 400
-                        }}
-                        onClick={
-                          gitStatus.changes && gitStatus.changes.length > 0
-                            ? () => setChangesDialogOpen(true)
-                            : undefined
-                        }
-                      >
-                        {gitStatus.changes && gitStatus.changes.length > 0
-                          ? `${gitStatus.changes.length} unpublished ${gitStatus.changes.length === 1 ? 'change' : 'changes'}`
-                          : 'All content published'
-                        }
-                      </Typography>
+                      <>
+                        <Typography 
+                          variant="body1" 
+                          sx={{ 
+                            color: gitStatus.changes && gitStatus.changes.length > 0 
+                              ? 'var(--Yellow)' 
+                              : 'var(--Text)',
+                            cursor: gitStatus.changes && gitStatus.changes.length > 0 ? 'pointer' : 'default',
+                            fontWeight: gitStatus.changes && gitStatus.changes.length > 0 ? 600 : 400
+                          }}
+                          onClick={
+                            gitStatus.changes && gitStatus.changes.length > 0
+                              ? () => setChangesDialogOpen(true)
+                              : undefined
+                          }
+                        >
+                          {gitStatus.changes && gitStatus.changes.length > 0
+                            ? `${gitStatus.changes.length} unpublished ${gitStatus.changes.length === 1 ? 'change' : 'changes'}`
+                            : 'All content published'
+                          }
+                        </Typography>
+                        
+                        {gitStatus.hasConflicts && (
+                          <Button
+                            variant="contained"
+                            color="error"
+                            size="small"
+                            onClick={() => setConflictModalOpen(true)}
+                            sx={{ ml: 2 }}
+                          >
+                            ⚠️ Conflicting Updates Available
+                          </Button>
+                        )}
+                      </>
                     )}
                   </Box>
                   <Stack direction="row" spacing={2}>
@@ -618,10 +696,16 @@ function AdminPanelContent() {
                       variant="contained"
                       startIcon={<CloudUploadIcon />}
                       onClick={() => setPublishDialogOpen(true)}
-                      disabled={gitLoading || !gitStatus.changes || gitStatus.changes.length === 0}
+                      disabled={gitLoading || !gitStatus.changes || gitStatus.changes.length === 0 || gitStatus.hasConflicts}
                     >
                       Publish
                     </Button>
+                    
+                    {gitStatus.hasConflicts && (
+                      <Tooltip title="You must accept remote updates before publishing">
+                        <InfoIcon color="error" />
+                      </Tooltip>
+                    )}
                   </Stack>
                 </Box>
               </CardContent>
@@ -1049,6 +1133,69 @@ function AdminPanelContent() {
         <DialogActions>
           <Button onClick={() => setUndoDialogOpen(false)}>Cancel</Button>
           <Button onClick={undoAllChanges} color="warning" variant="contained">Undo All Changes</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Conflict Resolution Modal */}
+      <Dialog
+        open={conflictModalOpen}
+        onClose={() => setConflictModalOpen(false)}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogTitle sx={{ color: 'error.main' }}>
+          ⚠️ Conflicting Content Updates
+        </DialogTitle>
+        <DialogContent>
+          <Alert severity="error" sx={{ mb: 2 }}>
+            <AlertTitle>Action Required</AlertTitle>
+            There are remote updates that conflict with your local changes. 
+            You must accept these updates to continue publishing. 
+            This will overwrite your local changes.
+          </Alert>
+          
+          <Typography variant="body1" sx={{ mb: 2 }}>
+            The following files will be overwritten:
+          </Typography>
+          
+          <Box sx={{ 
+            maxHeight: '300px', 
+            overflow: 'auto', 
+            backgroundColor: 'grey.900', 
+            borderRadius: 1, 
+            p: 2,
+            mb: 2
+          }}>
+            {conflictFiles.map((file, index) => (
+              <Typography 
+                key={index} 
+                variant="body2" 
+                sx={{ 
+                  fontFamily: 'monospace',
+                  color: 'error.light',
+                  mb: 0.5
+                }}
+              >
+                {file}
+              </Typography>
+            ))}
+          </Box>
+          
+          <Alert severity="warning">
+            Your local changes to these files will be permanently lost.
+          </Alert>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setConflictModalOpen(false)}>
+            Cancel
+          </Button>
+          <Button 
+            onClick={forcePullChanges} 
+            color="error" 
+            variant="contained"
+          >
+            Accept Updates & Overwrite Local Changes
+          </Button>
         </DialogActions>
       </Dialog>
     </Container>

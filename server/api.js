@@ -366,13 +366,37 @@ app.get('/api/git/status', async (req, res) => {
       };
     });
     
+    // Check for conflicts
+    let conflictingFiles = [];
+    try {
+      // Get local changes
+      const { stdout: localDiff } = await execAsync(
+        'git diff --name-only HEAD public/data',
+        { cwd: projectRoot }
+      );
+      // Get remote changes
+      const { stdout: remoteDiff } = await execAsync(
+        'git diff --name-only HEAD..origin/main public/data',
+        { cwd: projectRoot }
+      );
+      
+      const localFiles = localDiff.trim().split('\n').filter(f => f);
+      const remoteFiles = remoteDiff.trim().split('\n').filter(f => f);
+      conflictingFiles = localFiles.filter(file => remoteFiles.includes(file));
+    } catch (error) {
+      // If there's an error checking conflicts, continue without conflict info
+      console.warn('Error checking conflicts:', error.message);
+    }
+    
     res.json({
       hasLocalChanges,
       behindRemote: behindCount > 0,
       aheadRemote: aheadCount > 0,
       behindCount,
       aheadCount,
-      changes: changedFiles
+      changes: changedFiles,
+      hasConflicts: conflictingFiles.length > 0,
+      conflictingFiles
     });
   } catch (error) {
     console.error('Git status error:', error);
@@ -385,6 +409,38 @@ app.get('/api/git/status', async (req, res) => {
 app.post('/api/git/pull', async (req, res) => {
   try {
     const projectRoot = path.join(__dirname, '..');
+    
+    // Check for conflicts first
+    try {
+      await execAsync('git fetch origin main', { cwd: projectRoot });
+      
+      // Get local changes
+      const { stdout: localDiff } = await execAsync(
+        'git diff --name-only HEAD public/data',
+        { cwd: projectRoot }
+      );
+      // Get remote changes
+      const { stdout: remoteDiff } = await execAsync(
+        'git diff --name-only HEAD..origin/main public/data',
+        { cwd: projectRoot }
+      );
+      
+      const localFiles = localDiff.trim().split('\n').filter(f => f);
+      const remoteFiles = remoteDiff.trim().split('\n').filter(f => f);
+      const conflicts = localFiles.filter(file => remoteFiles.includes(file));
+      
+      if (conflicts.length > 0) {
+        return res.status(409).json({
+          error: 'Conflicts detected',
+          conflicts: conflicts,
+          message: 'Cannot pull due to conflicts. Use force pull to overwrite local changes.'
+        });
+      }
+    } catch (error) {
+      console.warn('Error checking for conflicts:', error.message);
+      // Continue with pull attempt if conflict check fails
+    }
+    
     const { stdout, stderr } = await execAsync('git pull origin main', { cwd: projectRoot });
     
     res.json({
@@ -453,6 +509,69 @@ app.post('/api/git/push', async (req, res) => {
       });
     }
     
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Check for conflicts between local and remote changes
+app.get('/api/git/check-conflicts', async (req, res) => {
+  try {
+    const projectRoot = path.join(__dirname, '..');
+    
+    // Fetch latest from remote without merging
+    await execAsync('git fetch origin main', { cwd: projectRoot });
+    
+    // Get list of locally modified files
+    const { stdout: localChanges } = await execAsync(
+      'git diff --name-only HEAD public/data',
+      { cwd: projectRoot }
+    );
+    const localFiles = localChanges.trim().split('\n').filter(f => f);
+    
+    // Get list of files that would be changed by pull
+    const { stdout: remoteChanges } = await execAsync(
+      'git diff --name-only HEAD..origin/main public/data',
+      { cwd: projectRoot }
+    );
+    const remoteFiles = remoteChanges.trim().split('\n').filter(f => f);
+    
+    // Find conflicts (files modified both locally and remotely)
+    const conflicts = localFiles.filter(file => remoteFiles.includes(file));
+    
+    // Non-conflicting remote changes
+    const nonConflictingRemoteFiles = remoteFiles.filter(file => !localFiles.includes(file));
+    
+    res.json({
+      hasConflicts: conflicts.length > 0,
+      conflicts,
+      nonConflictingRemoteChanges: nonConflictingRemoteFiles,
+      canAutoPull: conflicts.length === 0 && remoteFiles.length > 0
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Force pull endpoint - discards local changes and pulls remote
+app.post('/api/git/force-pull', async (req, res) => {
+  try {
+    const projectRoot = path.join(__dirname, '..');
+    
+    // Discard all local changes in public/data
+    await execAsync('git checkout HEAD -- public/data', { cwd: projectRoot });
+    
+    // Clean any untracked files
+    await execAsync('git clean -fd public/data', { cwd: projectRoot });
+    
+    // Now pull latest
+    const { stdout } = await execAsync('git pull origin main', { cwd: projectRoot });
+    
+    res.json({
+      success: true,
+      message: 'Local changes discarded and latest changes pulled',
+      output: stdout
+    });
+  } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
