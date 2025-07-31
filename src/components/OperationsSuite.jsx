@@ -28,8 +28,10 @@ const FeatureCard = ({ solution, isDevMode, navigate }) => {
       </div>
       
       <div className="operations-card-content">
-        <h3 className="operations-card-title">{solution.title}</h3>
-        <p className="operations-card-description">{solution.description}</p>
+        <div className="operations-card-body">
+          <h3 className="operations-card-title">{solution.title}</h3>
+          <p className="operations-card-description">{solution.description}</p>
+        </div>
         
         <div className="operations-learn-more">
           <span>Learn More</span>
