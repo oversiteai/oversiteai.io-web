@@ -36,7 +36,7 @@ const sanitizeFilename = (filename) => {
   name = name.replace(/[\s_]+/g, '-');
   
   // Remove any non-alphanumeric characters except hyphens
-  name = name.replace(/[^a-z0-9\-]/g, '');
+  name = name.replace(/[^a-z0-9-]/g, '');
   
   // Remove multiple consecutive hyphens
   name = name.replace(/-+/g, '-');

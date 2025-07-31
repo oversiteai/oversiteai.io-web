@@ -10,7 +10,7 @@ const FeaturedSection = () => {
   const [loading, setLoading] = useState(true);
   const videoRef = useRef(null);
   const sectionRef = useRef(null);
-  const isDevMode = process.env.NODE_ENV === 'development';
+  const isDevMode = import.meta.env.DEV;
 
   // Fetch featured data
   useEffect(() => {

@@ -10,58 +10,6 @@ const OperationsSuite = () => {
   const [loading, setLoading] = useState(true);
   const isDevMode = import.meta.env.DEV;
   
-  // Fallback data for the first 8 solutions
-  const fallbackSolutions = [
-    {
-      id: 1,
-      image: "images/geofence.png",
-      title: "Geofencing and GPS Precision",
-      description: "Every driver route, site visit, and fluid transfer is geotagged and timestamped using high-accuracy GPS."
-    },
-    {
-      id: 2,
-      image: "images/bluetooth.png",
-      title: "Bluetooth Flow Meter Automation",
-      description: "Integrate directly with Bluetooth-enabled flow meters for accurate volume readings at pickup and disposal points."
-    },
-    {
-      id: 3,
-      image: "images/realtime.png",
-      title: "Real-Time Well Verification",
-      description: "Cross-reference injection sites against permitted wells database for instant verification before fluid disposal."
-    },
-    {
-      id: 4,
-      image: "images/automated_uic.png",
-      title: "Automated UIC Generation",
-      description: "Generate UIC documentation automatically by combining flow data, GPS tracks, operator ID, and digital signatures."
-    },
-    {
-      id: 5,
-      image: "images/digital_custody_chain.png",
-      title: "Digital Chain of Custody",
-      description: "Immutable audit logs record every step from fluid origin to disposal, tracking who handled it, when, where, and how."
-    },
-    {
-      id: 6,
-      image: "images/inventory1.jpg",
-      title: "Smart Inventory Management",
-      description: "Track every piece of equipment and material in real-time with RFID integration and predictive restocking."
-    },
-    {
-      id: 7,
-      image: "images/maintenance1.jpg",
-      title: "Predictive Maintenance Analytics",
-      description: "Machine learning analyzes equipment data to predict failures and optimize maintenance schedules proactively."
-    },
-    {
-      id: 8,
-      image: "images/compliance1.jpg",
-      title: "Environmental Compliance Suite",
-      description: "Navigate environmental regulations with automated monitoring, documentation, and reporting for all major frameworks."
-    }
-  ];
-
   useEffect(() => {
     const loadSolutions = async () => {
       const loadedSolutions = [];
@@ -76,12 +24,12 @@ const OperationsSuite = () => {
             const data = await response.json();
             
             // Include all solutions, not just featured
-            // Use data from JSON if available, otherwise use fallback
+            // Use data from JSON if available
             const solutionData = {
               id: data.id || id,
-              title: data.title || fallbackSolutions[id - 1]?.title || `Solution ${id}`,
-              description: data.teaser || data.subtitle || fallbackSolutions[id - 1]?.description || '',
-              image: data.primaryImage || data.image || fallbackSolutions[id - 1]?.image || `images/solution${id}.png`,
+              title: data.title || `Solution ${id}`,
+              description: data.teaser || data.subtitle || '',
+              image: data.primaryImage || data.image || `images/solution${id}.png`,
               featured: data.featured || false
             };
             loadedSolutions.push(solutionData);
@@ -98,12 +46,8 @@ const OperationsSuite = () => {
         if (id > 20) break;
       }
       
-      // If no solutions were loaded, use fallback data
-      if (loadedSolutions.length === 0) {
-        setSolutions(fallbackSolutions);
-      } else {
-        setSolutions(loadedSolutions);
-      }
+      // Set the loaded solutions
+      setSolutions(loadedSolutions);
       setLoading(false);
     };
     
