@@ -16,5 +16,7 @@
     "Compliance"
   ],
   "primaryImage": "images/geofence.png",
-  "featured": true
+  "featured": true,
+  "cardImage": "data/solutions/1/7badfabc-74af-45db-b376-bc598743dd00-2-1753980767147.jpg",
+  "detailImage": "images/geofence.png"
 }
