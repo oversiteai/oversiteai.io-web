@@ -124,16 +124,16 @@ const HeroSection = () => {
         <div className="hero-stats">
           
           <div className="stat-card">
-            <div className="stat-number">500+</div>
-            <div className="stat-label">Sites Monitored</div>
+            <div className="stat-number">80%+</div>
+            <div className="stat-label">Increased visibility</div>
             <div className="stat-bar">
               <div className="stat-progress"></div>
             </div>
           </div>
           
           <div className="stat-card uptime">
-            <div className="stat-number">99.7%</div>
-            <div className="stat-label">Uptime</div>
+            <div className="stat-number">94.7%</div>
+            <div className="stat-label">Detection Accuracy</div>
             <div className="stat-bar">
               <div className="stat-progress"></div>
             </div>
@@ -141,7 +141,7 @@ const HeroSection = () => {
           
           <div className="stat-card">
             <div className="stat-number">24/7</div>
-            <div className="stat-label">AI Monitoring</div>
+            <div className="stat-label">AI Awareness</div>
             <div className="stat-bar">
               <div className="stat-progress"></div>
             </div>
