@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Container, Typography, Button, Box, CircularProgress } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EditIcon from '@mui/icons-material/Edit';
@@ -8,11 +8,12 @@ import './SolutionDetail.css';
 function SolutionDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [solution, setSolution] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [primaryImageValid, setPrimaryImageValid] = useState(false);
-  const isDevMode = process.env.NODE_ENV === 'development';
+  const isDevMode = import.meta.env.DEV;
 
   useEffect(() => {
     // Scroll to top when component mounts or id changes
@@ -78,21 +79,7 @@ function SolutionDetail() {
         <div className="navigation-buttons">
           <div 
             className="nav-button"
-            onClick={() => {
-              navigate('/');
-              setTimeout(() => {
-                const element = document.querySelector('.solutions-section');
-                if (element) {
-                  const headerOffset = window.innerWidth * 0.02;
-                  const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
-                  const offsetPosition = elementPosition - headerOffset - (window.innerWidth * 0.01);
-                  window.scrollTo({
-                    top: offsetPosition,
-                    behavior: 'smooth'
-                  });
-                }
-              }, 700);
-            }}
+            onClick={() => navigate('/solutions')}
           >
             <svg viewBox="0 0 20 20" fill="none" style={{ width: '1.2vw', height: '1.2vw' }}>
               <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>

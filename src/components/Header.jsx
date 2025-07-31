@@ -9,6 +9,7 @@ const Header = () => {
   const location = useLocation();
   const isHomePage = location.pathname === '/';
   const isAboutPage = location.pathname === '/about';
+  const isSolutionsPage = location.pathname === '/solutions';
 
   const handleMouseEnter = (index) => {
     const navItem = navItemRefs.current[index];
@@ -68,37 +69,10 @@ const Header = () => {
             <span>About</span>
           </div>
           <div
-            className="nav-item"
+            className={`nav-item ${isSolutionsPage ? 'nav-item-active' : ''}`}
             ref={el => navItemRefs.current[1] = el}
             onMouseEnter={() => handleMouseEnter(1)}
-            onClick={() => {
-              if (isHomePage) {
-                const element = document.querySelector('.solutions-section');
-                if (element) {
-                  const headerOffset = window.innerWidth * 0.02;
-                  const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
-                  const offsetPosition = elementPosition - headerOffset - (window.innerWidth * 0.01);
-                  window.scrollTo({
-                    top: offsetPosition,
-                    behavior: 'smooth'
-                  });
-                }
-              } else {
-                navigate('/');
-                setTimeout(() => {
-                  const element = document.querySelector('.solutions-section');
-                  if (element) {
-                    const headerOffset = window.innerWidth * 0.02;
-                    const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
-                    const offsetPosition = elementPosition - headerOffset - (window.innerWidth * 0.01);
-                    window.scrollTo({
-                      top: offsetPosition,
-                      behavior: 'smooth'
-                    });
-                  }
-                }, 700);
-              }
-            }}
+            onClick={() => navigate('/solutions')}
           >
             <span>Solutions</span>
           </div>

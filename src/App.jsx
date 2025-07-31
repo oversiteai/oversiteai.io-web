@@ -13,6 +13,7 @@ import Footer from './components/Footer';
 import ThemeSwitcher from './components/ThemeSwitcher';
 import SolutionDetail from './components/SolutionDetail';
 import AboutPage from './components/AboutPage';
+import SolutionsPage from './components/SolutionsPage';
 import AdminPanel from './components/admin/AdminPanel';
 
 function HomePage() {
@@ -102,6 +103,7 @@ function AppContent() {
           <Routes location={displayLocation}>
             <Route path="/" element={<HomePage />} />
             <Route path="/about" element={<AboutPage />} />
+            <Route path="/solutions" element={<SolutionsPage />} />
             <Route path="/solution/detail/:id" element={<SolutionDetail />} />
             {/* Admin routes - only in development */}
             {import.meta.env.DEV && (

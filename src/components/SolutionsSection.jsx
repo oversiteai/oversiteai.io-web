@@ -97,7 +97,7 @@ const SolutionsSection = () => {
           } else {
             consecutiveFailures++;
           }
-        } catch (error) {
+        } catch {
           consecutiveFailures++;
         }
         id++;
@@ -121,10 +121,6 @@ const SolutionsSection = () => {
   }, []);
 
   const totalPages = Math.ceil(totalSolutions / SOLUTIONS_PER_PAGE);
-  const displayedSolutions = solutions.slice(
-    currentPage * SOLUTIONS_PER_PAGE,
-    (currentPage + 1) * SOLUTIONS_PER_PAGE
-  );
 
   const handlePageChange = (newPage) => {
     if (newPage >= 0 && newPage < totalPages && !isTransitioning) {
