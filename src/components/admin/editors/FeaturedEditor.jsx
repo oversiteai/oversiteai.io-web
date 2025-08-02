@@ -388,7 +388,7 @@ const FeaturedEditor = ({
             <Button
               variant="outlined"
               startIcon={<PreviewIcon />}
-              onClick={() => window.open('/oversiteai.io-web/#/', 'preview_window')}
+              onClick={() => window.open('#/', 'preview_window')}
               color="primary"
             >
               Preview Homepage

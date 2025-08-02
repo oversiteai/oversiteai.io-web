@@ -1,0 +1,14 @@
+{
+  "id": "header-contact",
+  "title": "Get in Touch",
+  "subtitle": "We're here to help transform your operations",
+  "prefillMessage": "I'd like to learn more about OversiteAI's solutions for the oil & gas industry...",
+  "submitButtonText": "Send Message",
+  "successMessage": "Thank you! We'll respond within 24 hours.",
+  "fields": {
+    "name": { "placeholder": "Your Name", "required": true },
+    "email": { "placeholder": "Email Address", "required": true },
+    "phone": { "placeholder": "Phone Number (Optional)", "required": false },
+    "message": { "placeholder": "How can we help you?", "required": true }
+  }
+}

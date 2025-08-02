@@ -21,15 +21,15 @@ const ContactModal = ({ isOpen, onClose, ctaId }) => {
 
   // Initialize EmailJS once when component mounts
   useEffect(() => {
-    if (import.meta.env.VITE_EMAILJS_PUBLIC_KEY) {
-      emailjs.init(import.meta.env.VITE_EMAILJS_PUBLIC_KEY);
+    if (window.APP_CONFIG?.EMAILJS_PUBLIC_KEY) {
+      emailjs.init(window.APP_CONFIG.EMAILJS_PUBLIC_KEY);
     }
   }, []);
 
   // Load CTA data from JSON
   useEffect(() => {
     if (isOpen && ctaId) {
-      fetch(`/oversiteai.io-web/cta/${ctaId}.json`)
+      fetch(`cta/${ctaId}.json`)
         .then(res => res.json())
         .then(data => {
           setCtaData(data);
@@ -196,8 +196,8 @@ const ContactModal = ({ isOpen, onClose, ctaId }) => {
       };
       
       const response = await emailjs.send(
-        import.meta.env.VITE_EMAILJS_SERVICE_ID,
-        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+        window.APP_CONFIG.EMAILJS_SERVICE_ID,
+        window.APP_CONFIG.EMAILJS_TEMPLATE_ID,
         templateParams
       );
       

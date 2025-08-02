@@ -1,5 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useContactModal } from '../hooks/useContactModal';
+import ContactModal from './ContactModal';
 
 const Header = () => {
   const [underlineStyle, setUnderlineStyle] = useState({});
@@ -7,6 +9,7 @@ const Header = () => {
   const navItemRefs = useRef([]);
   const navigate = useNavigate();
   const location = useLocation();
+  const { isOpen, ctaId, openModal, closeModal } = useContactModal();
   const isHomePage = location.pathname === '/';
   const isAboutPage = location.pathname === '/about';
   const isSolutionsPage = location.pathname === '/solutions';
@@ -29,7 +32,8 @@ const Header = () => {
   };
 
   return (
-    <header className="header">
+    <>
+      <header className="header">
       <div className="header-container">
         <div
           className="logo-section"
@@ -113,11 +117,21 @@ const Header = () => {
           </div>
         </nav>
 
-        <button className="contact-button">
+        <button 
+          className="contact-button"
+          onClick={() => openModal('header-contact')}
+        >
           Contact Us
         </button>
       </div>
     </header>
+    
+    <ContactModal 
+      isOpen={isOpen}
+      onClose={closeModal}
+      ctaId={ctaId}
+    />
+    </>
   );
 };
 

@@ -1,8 +1,13 @@
 import React from 'react';
+import { useContactModal } from '../hooks/useContactModal';
+import ContactModal from './ContactModal';
 
 const LookingAheadSection = () => {
+  const { isOpen, ctaId, openModal, closeModal } = useContactModal();
+  
   return (
-    <section className="looking-ahead-section">
+    <>
+      <section className="looking-ahead-section">
       {/* Background decorative elements */}
       <div className="looking-ahead-bg">
         <img 
@@ -69,15 +74,28 @@ const LookingAheadSection = () => {
         </div>
         
         <div className="looking-ahead-actions">
-          <button className="btn-secondary">
+          <button 
+            className="btn-secondary"
+            onClick={() => openModal('header-contact')}
+          >
             Talk to Our Team
           </button>
-          <button className="btn-primary">
+          <button 
+            className="btn-primary"
+            onClick={() => openModal('operations-demo')}
+          >
             Book a Demo
           </button>
         </div>
       </div>
     </section>
+    
+    <ContactModal 
+      isOpen={isOpen}
+      onClose={closeModal}
+      ctaId={ctaId}
+    />
+    </>
   );
 };
 
