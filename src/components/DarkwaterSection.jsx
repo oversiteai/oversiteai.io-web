@@ -1,10 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useContactModal } from '../hooks/useContactModal';
+import ContactModal from './ContactModal';
 
 const DarkwaterSection = () => {
   const [videoEnded, setVideoEnded] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const videoRef = useRef(null);
   const sectionRef = useRef(null);
+  const { isOpen, ctaId, openModal, closeModal } = useContactModal();
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -38,7 +41,8 @@ const DarkwaterSection = () => {
   };
 
   return (
-    <section className="darkwater-section" ref={sectionRef}>
+    <>
+      <section className="darkwater-section" ref={sectionRef}>
       <div className="bg-overlays">
         <div className="overlay-circle-1"></div>
         <div className="overlay-circle-2"></div>
@@ -91,7 +95,10 @@ const DarkwaterSection = () => {
               </div>
             </div>
             
-            <button className="btn btn-primary">
+            <button 
+              className="btn btn-primary"
+              onClick={() => openModal('darkwater-inquiry')}
+            >
               Talk to Us About DARKWATER
             </button>
           </div>
@@ -153,6 +160,13 @@ const DarkwaterSection = () => {
         </div>
       </div>
     </section>
+    
+    <ContactModal 
+      isOpen={isOpen}
+      onClose={closeModal}
+      ctaId={ctaId}
+    />
+    </>
   );
 };
 

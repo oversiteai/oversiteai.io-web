@@ -1,0 +1,14 @@
+{
+  "id": "darkwater-inquiry",
+  "title": "Secure Your Operations with DARKWATER",
+  "subtitle": "Learn how AI-driven cybersecurity can protect your infrastructure",
+  "prefillMessage": "I'm interested in learning more about PROJECT DARKWATER and how it can enhance our cybersecurity posture. Our main security concerns include...",
+  "submitButtonText": "Get DARKWATER Details",
+  "successMessage": "Thank you! Our security team will contact you within 24 hours.",
+  "fields": {
+    "name": { "placeholder": "Your Name", "required": true },
+    "email": { "placeholder": "Business Email", "required": true },
+    "phone": { "placeholder": "Direct Line", "required": true },
+    "message": { "placeholder": "Tell us about your security needs", "required": true }
+  }
+}

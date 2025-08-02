@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import EditIcon from '@mui/icons-material/Edit';
+import { useContactModal } from '../hooks/useContactModal';
+import ContactModal from './ContactModal';
 
 // Removed FeatureCard component - will use inline rendering like SolutionsSection
 
@@ -9,6 +11,7 @@ const OperationsSuite = () => {
   const [solutions, setSolutions] = useState([]);
   const [loading, setLoading] = useState(true);
   const isDevMode = import.meta.env.DEV;
+  const { isOpen, ctaId, openModal, closeModal } = useContactModal();
   
   useEffect(() => {
     const loadSolutions = async () => {
@@ -55,7 +58,8 @@ const OperationsSuite = () => {
   }, []);
 
   return (
-    <div className="operations-suite">
+    <>
+      <div className="operations-suite">
       {/* Background blur elements */}
       <svg className="operations-blur-1" width="718" height="789" viewBox="0 0 718 789" fill="none" xmlns="http://www.w3.org/2000/svg">
         <g opacity="0.5" filter="url(#filter0_f_435_1197)">
@@ -171,13 +175,23 @@ const OperationsSuite = () => {
 
         <div className="operations-cta-section">
           <div className="operations-cta-container">
-            <button className="operations-cta-button">
+            <button 
+              className="operations-cta-button"
+              onClick={() => openModal('operations-demo')}
+            >
               <span className="operations-cta-text">Request a Demo</span>
             </button>
           </div>
         </div>
       </div>
     </div>
+    
+    <ContactModal 
+      isOpen={isOpen}
+      onClose={closeModal}
+      ctaId={ctaId}
+    />
+    </>
   );
 };
 

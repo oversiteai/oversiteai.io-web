@@ -1,0 +1,14 @@
+{
+  "id": "hero-talk-to-us",
+  "title": "Let's Transform Your Operations",
+  "subtitle": "Connect with our energy intelligence experts",
+  "prefillMessage": "I'm interested in learning how OversiteAI can help modernize our oil & gas operations. Specifically, I'd like to discuss...",
+  "submitButtonText": "Send Message",
+  "successMessage": "Thank you! Our team will reach out within 24 hours.",
+  "fields": {
+    "name": { "placeholder": "Your Name", "required": true },
+    "email": { "placeholder": "Email Address", "required": true },
+    "phone": { "placeholder": "Phone Number (Optional)", "required": false },
+    "message": { "placeholder": "Tell us about your needs", "required": true }
+  }
+}

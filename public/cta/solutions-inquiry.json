@@ -1,0 +1,14 @@
+{
+  "id": "solutions-inquiry",
+  "title": "Explore Our Solutions",
+  "subtitle": "Learn how our AI can address your specific challenges",
+  "prefillMessage": "I'm exploring AI solutions for our energy operations. I'm particularly interested in...",
+  "submitButtonText": "Get Started",
+  "successMessage": "Thanks for your interest! An expert will contact you soon.",
+  "fields": {
+    "name": { "placeholder": "Full Name", "required": true },
+    "email": { "placeholder": "Business Email", "required": true },
+    "phone": { "placeholder": "Contact Number", "required": false },
+    "message": { "placeholder": "Which solutions interest you most?", "required": true }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "id": "operations-demo",
+  "title": "See OversiteAI in Action",
+  "subtitle": "Schedule a personalized demo of our operations suite",
+  "prefillMessage": "I'd like to schedule a demo to see how OversiteAI can optimize our operations. Our main challenges include...",
+  "submitButtonText": "Request Demo",
+  "successMessage": "Perfect! We'll contact you to schedule your personalized demo.",
+  "fields": {
+    "name": { "placeholder": "Your Name", "required": true },
+    "email": { "placeholder": "Work Email", "required": true },
+    "phone": { "placeholder": "Phone Number", "required": true },
+    "message": { "placeholder": "What would you like to see in the demo?", "required": true }
+  }
+}

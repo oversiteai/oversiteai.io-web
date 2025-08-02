@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import EditIcon from '@mui/icons-material/Edit';
+import { useContactModal } from '../hooks/useContactModal';
+import ContactModal from './ContactModal';
 
 const FeaturedSection = () => {
   const navigate = useNavigate();
@@ -11,6 +13,7 @@ const FeaturedSection = () => {
   const videoRef = useRef(null);
   const sectionRef = useRef(null);
   const isDevMode = import.meta.env.DEV;
+  const { isOpen, ctaId, openModal, closeModal } = useContactModal();
 
   // Fetch featured data
   useEffect(() => {
@@ -99,8 +102,9 @@ const FeaturedSection = () => {
   };
 
   return (
-    <section 
-      className="featured-section" 
+    <>
+      <section 
+        className="featured-section" 
       ref={sectionRef}
       style={{ background: featuredData.background?.gradient }}
     >
@@ -162,7 +166,7 @@ const FeaturedSection = () => {
             {featuredData.cta && (
               <button 
                 className={`btn btn-${featuredData.cta.variant || 'primary'}`}
-                onClick={() => window.location.href = featuredData.cta.link}
+                onClick={() => openModal('darkwater-inquiry')}
               >
                 {featuredData.cta.text}
               </button>
@@ -227,6 +231,13 @@ const FeaturedSection = () => {
         </div>
       </div>
     </section>
+    
+    <ContactModal 
+      isOpen={isOpen}
+      onClose={closeModal}
+      ctaId={ctaId}
+    />
+    </>
   );
 };
 

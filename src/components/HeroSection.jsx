@@ -1,8 +1,15 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useContactModal } from '../hooks/useContactModal';
+import ContactModal from './ContactModal';
 
 const HeroSection = () => {
+  const navigate = useNavigate();
+  const { isOpen, ctaId, openModal, closeModal } = useContactModal();
+  
   return (
-    <section className="hero-section">
+    <>
+      <section className="hero-section">
       <div className="hero-video-background">
         <video 
           className="hero-bg-video"
@@ -117,8 +124,18 @@ const HeroSection = () => {
         </p>
         
         <div className="hero-buttons">
-          <button className="btn btn-outline">Explore Solutions</button>
-          <button className="btn btn-primary">Talk To Us</button>
+          <button 
+            className="btn btn-outline"
+            onClick={() => navigate('/solutions')}
+          >
+            Explore Solutions
+          </button>
+          <button 
+            className="btn btn-primary"
+            onClick={() => openModal('hero-talk-to-us')}
+          >
+            Talk To Us
+          </button>
         </div>
         
         <div className="hero-stats">
@@ -195,6 +212,13 @@ const HeroSection = () => {
         </div>
       </div>
     </section>
+      
+      <ContactModal 
+        isOpen={isOpen}
+        onClose={closeModal}
+        ctaId={ctaId}
+      />
+    </>
   );
 };
 
