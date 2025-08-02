@@ -10,7 +10,7 @@ const MetricsSection = () => {
       ),
       number: "1ms",
       label: "Alert Speed",
-      description: "Real-time detection powered by edge AI and event-driven telemetry.."
+      description: "Real-time detection powered by edge AI and event-driven telemetry."
     },
     {
       icon: (
@@ -20,7 +20,7 @@ const MetricsSection = () => {
       ),
       number: "15,000+",
       label: "field tickets auto-filled",
-      description: "Automatically generate with location, time, and volume data—no manual entry needed."
+      description: "Automatically generated with location, time, and volume data.<br>No manual entry needed."
     },
     {
       icon: (
@@ -96,7 +96,7 @@ const MetricsSection = () => {
               
               <div className="metric-number">{metric.number}</div>
               <div className="metric-label">{metric.label}</div>
-              <div className="metric-description">{metric.description}</div>
+              <div className="metric-description" dangerouslySetInnerHTML={{ __html: metric.description }} />
             </div>
           ))}
         </div>
